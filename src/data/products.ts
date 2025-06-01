@@ -1,10 +1,11 @@
 
+
 export const products = [
   {
     id: 1,
     name: "Camisa Beast Sports Preta",
     price: 89.90,
-    originalPrice: 129.90,
+    originalPrice: 119.90,
     image: "/lovable-uploads/11557640-2ba5-4836-9c46-ad815453cf21.png",
     category: "camisas",
     brand: "Beast Sports",
@@ -25,7 +26,7 @@ export const products = [
     id: 2,
     name: "Camisa Beast Sports Branca",
     price: 89.90,
-    originalPrice: 129.90,
+    originalPrice: 119.90,
     image: "/lovable-uploads/db9c9924-3608-4501-8e6f-f5340b6b9ad3.png",
     category: "camisas",
     brand: "Beast Sports",
@@ -85,3 +86,4 @@ export const products = [
     colors: ["Branco"]
   }
 ];
+
