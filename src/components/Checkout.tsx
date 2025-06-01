@@ -1,9 +1,14 @@
-
 import { useState } from "react";
 import { ArrowLeft, CreditCard, MapPin, User } from "lucide-react";
 import { useOrders } from "@/hooks/useOrders";
 
-const Checkout = ({ items, productData, setCurrentView }) => {
+interface CheckoutProps {
+  items?: any[];
+  productData?: any;
+  setCurrentView: (view: string) => void;
+}
+
+const Checkout = ({ items, productData, setCurrentView }: CheckoutProps) => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -242,6 +247,13 @@ const Checkout = ({ items, productData, setCurrentView }) => {
                     </label>
                   </div>
                 </div>
+
+                <button
+                  type="submit"
+                  className="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors"
+                >
+                  Finalizar Pedido
+                </button>
               </form>
             </div>
 
