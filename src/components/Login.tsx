@@ -265,22 +265,6 @@ const Login = ({ setUser, setCurrentView }) => {
               </button>
             </form>
 
-            <div className="mt-6 text-center">
-              <span className="text-gray-600">
-                {isLogin ? "Não tem uma conta?" : "Já tem uma conta?"}
-              </span>
-              <button
-                onClick={() => {
-                  setIsLogin(!isLogin);
-                  setErrors({ email: "", password: "", confirmPassword: "", general: "" });
-                  setFormData({ name: "", email: "", password: "", confirmPassword: "" });
-                }}
-                className="ml-2 text-green-600 hover:text-green-700 font-semibold"
-              >
-                {isLogin ? "Cadastre-se" : "Entrar"}
-              </button>
-            </div>
-
             {/* Credenciais de teste para demonstração */}
             {isLogin && (
               <div className="mt-6 p-3 bg-blue-50 border border-blue-200 rounded-lg">
