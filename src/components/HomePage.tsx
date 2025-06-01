@@ -19,7 +19,6 @@ const HomePage = ({ setCurrentView, addToCart, toggleFavorite, favorites }: Home
         addToCart={addToCart}
         toggleFavorite={toggleFavorite}
         favorites={favorites}
-        featured={true}
         setCurrentView={setCurrentView}
       />
     </>
