@@ -4,9 +4,12 @@ const Hero = ({
 }) => {
   return <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 md:pt-0">
       {/* Background Image */}
-      <div className="absolute inset-0 bg-cover bg-center bg-no-repeat" style={{
-      backgroundImage: "url('/lovable-uploads/847a7119-c808-4db7-9e51-4e9c5241a9e3.png')"
-    }} />
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage: "url('/lovable-uploads/847a7119-c808-4db7-9e51-4e9c5241a9e3.png')",
+        }}
+      />
       
       {/* Dark overlay for better text readability */}
       <div className="absolute inset-0 bg-black/60" />
@@ -58,20 +61,15 @@ const Hero = ({
             <div className="text-center">
               <div className="text-xl md:text-3xl lg:text-4xl font-bold mb-1 md:mb-2">
             </div>
-              <div className="text-green-200 text-xs md:text-sm">
-            </div>
-            </div>
-            <div className="text-center">
-              <div className="text-xl md:text-3xl lg:text-4xl font-bold mb-1 md:mb-2">
-            </div>
-              <div className="text-green-200 text-xs md:text-sm">
-            </div>
+              <div className="text-green-200 text-xs md:text-sm">Produtos</div>
             </div>
             <div className="text-center">
-              <div className="text-xl md:text-3xl lg:text-4xl font-bold mb-1 md:mb-2">
+              <div className="text-xl md:text-3xl lg:text-4xl font-bold mb-1 md:mb-2">50k+</div>
+              <div className="text-green-200 text-xs md:text-sm">Clientes</div>
             </div>
-              <div className="text-green-200 text-xs md:text-sm">
-            </div>
+            <div className="text-center">
+              <div className="text-xl md:text-3xl lg:text-4xl font-bold mb-1 md:mb-2">98%</div>
+              <div className="text-green-200 text-xs md:text-sm">Satisfação</div>
             </div>
           </div>
         </div>
