@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
@@ -7,6 +6,7 @@ import Footer from "@/components/Footer";
 import Cart from "@/components/Cart";
 import Login from "@/components/Login";
 import Account from "@/components/Account";
+import ProductDetails from "@/components/ProductDetails";
 
 const Index = () => {
   const [currentView, setCurrentView] = useState("home");
@@ -58,7 +58,6 @@ const Index = () => {
     // Check if currentView starts with "product-"
     if (currentView.startsWith("product-")) {
       const productId = currentView.replace("product-", "");
-      const ProductDetails = require("@/components/ProductDetails").default;
       return (
         <ProductDetails
           productId={productId}
