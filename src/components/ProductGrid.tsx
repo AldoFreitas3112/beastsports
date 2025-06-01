@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Heart, ShoppingCart, Star, Filter, Eye } from "lucide-react";
 import MobileProductCard from "./MobileProductCard";
@@ -203,11 +202,6 @@ const ProductGrid = ({ addToCart, toggleFavorite, favorites, featured = false, s
                     className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500"
                   />
                   
-                  {product.discount && (
-                    <div className="absolute top-4 left-4 bg-red-500 text-white px-2 py-1 rounded-full text-sm font-bold">
-                      -{product.discount}%
-                    </div>
-                  )}
                   
                   <button
                     onClick={() => setCurrentView(`product-${product.id}`)}

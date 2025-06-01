@@ -5,7 +5,7 @@ export const products = [
   {
     id: 1,
     name: "Camisa Beast Sports Preta",
-    price: 89.90,
+    price: 119.90,
     image: "/lovable-uploads/11557640-2ba5-4836-9c46-ad815453cf21.png",
     category: "camisas",
     brand: "Beast Sports",
@@ -24,7 +24,7 @@ export const products = [
   {
     id: 2,
     name: "Camisa Beast Sports Branca",
-    price: 89.90,
+    price: 119.90,
     image: "/lovable-uploads/db9c9924-3608-4501-8e6f-f5340b6b9ad3.png",
     category: "camisas",
     brand: "Beast Sports",
@@ -43,7 +43,7 @@ export const products = [
   {
     id: 3,
     name: "Camiseta Beast Sports Preta",
-    price: 69.90,
+    price: 89.90,
     image: "/lovable-uploads/4e4ff565-7c7f-44e2-9031-680ad2a4a73b.png",
     category: "camisetas",
     brand: "Beast Sports",
@@ -62,7 +62,7 @@ export const products = [
   {
     id: 4,
     name: "Camiseta Beast Sports Branca",
-    price: 69.90,
+    price: 89.90,
     image: "/lovable-uploads/9dc30637-25c7-4819-b87e-579d8300af91.png",
     category: "camisetas",
     brand: "Beast Sports",

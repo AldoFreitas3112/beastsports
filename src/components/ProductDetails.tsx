@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { ArrowLeft, Heart, ShoppingCart, Star, Plus, Minus, CreditCard } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";

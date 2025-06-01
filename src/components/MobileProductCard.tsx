@@ -5,13 +5,11 @@ interface Product {
   id: number;
   name: string;
   price: number;
-  originalPrice?: number;
   image: string;
   category: string;
   brand: string;
   rating: number;
   description: string;
-  discount?: number;
 }
 
 interface MobileProductCardProps {
@@ -37,12 +35,6 @@ const MobileProductCard = ({
           alt={product.name}
           className="w-full h-48 object-cover"
         />
-        
-        {product.discount && (
-          <div className="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-bold">
-            -{product.discount}%
-          </div>
-        )}
         
         <button
           onClick={() => setCurrentView(`product-${product.id}`)}
@@ -89,11 +81,6 @@ const MobileProductCard = ({
           <span className="text-lg font-bold text-green-600">
             R$ {product.price.toFixed(2)}
           </span>
-          {product.originalPrice && (
-            <span className="text-sm text-gray-500 line-through">
-              R$ {product.originalPrice.toFixed(2)}
-            </span>
-          )}
         </div>
         
         <div className="flex space-x-2">
