@@ -1,6 +1,5 @@
 
-import { Search, ShoppingCart } from "lucide-react";
-import { useState } from "react";
+import { ShoppingCart } from "lucide-react";
 import MobileNavigation from "./MobileNavigation";
 
 interface MobileHeaderProps {
@@ -11,8 +10,6 @@ interface MobileHeaderProps {
 }
 
 const MobileHeader = ({ setCurrentView, cartItemsCount, user, setUser }: MobileHeaderProps) => {
-  const [searchQuery, setSearchQuery] = useState("");
-
   return (
     <header className="md:hidden fixed top-0 left-0 right-0 z-30 bg-white shadow-lg">
       <div className="flex items-center justify-between p-4">
@@ -38,20 +35,6 @@ const MobileHeader = ({ setCurrentView, cartItemsCount, user, setUser }: MobileH
             </span>
           )}
         </button>
-      </div>
-
-      {/* Search Bar */}
-      <div className="px-4 pb-4">
-        <div className="flex items-center bg-gray-100 rounded-full px-4 py-3">
-          <Search className="h-4 w-4 text-gray-500 mr-3" />
-          <input
-            type="text"
-            placeholder="Buscar produtos..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="bg-transparent outline-none flex-1 text-sm"
-          />
-        </div>
       </div>
 
       <MobileNavigation 
