@@ -1,9 +1,8 @@
-
 import { ArrowRight, Zap } from "lucide-react";
 
 const Hero = ({ setCurrentView }) => {
   return (
-    <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-green-600 via-green-700 to-green-800 overflow-hidden">
+    <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-green-600 via-green-700 to-green-800 overflow-hidden pt-20 md:pt-0">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute top-10 left-10 w-20 h-20 border-2 border-white rounded-full"></div>
@@ -15,13 +14,13 @@ const Hero = ({ setCurrentView }) => {
       <div className="container mx-auto px-4 text-center text-white relative z-10">
         <div className="max-w-4xl mx-auto">
           {/* Badge */}
-          <div className="inline-flex items-center space-x-2 bg-white/20 backdrop-blur-sm rounded-full px-6 py-2 mb-8">
+          <div className="inline-flex items-center space-x-2 bg-white/20 backdrop-blur-sm rounded-full px-4 md:px-6 py-2 mb-6 md:mb-8">
             <Zap className="h-4 w-4 text-yellow-400" />
-            <span className="text-sm font-medium">Equipamentos de Alto Desempenho</span>
+            <span className="text-xs md:text-sm font-medium">Equipamentos de Alto Desempenho</span>
           </div>
 
           {/* Main Heading */}
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
+          <h1 className="text-3xl md:text-5xl lg:text-7xl font-bold mb-4 md:mb-6 leading-tight">
             DESPERTE O
             <span className="block bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
               CRAQUE
@@ -30,48 +29,48 @@ const Hero = ({ setCurrentView }) => {
           </h1>
 
           {/* Subtitle */}
-          <p className="text-xl md:text-2xl mb-8 text-green-100 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-base md:text-xl lg:text-2xl mb-6 md:mb-8 text-green-100 max-w-3xl mx-auto leading-relaxed px-4">
             Equipamentos esportivos de primeira linha para atletas que não aceitam limites. 
             Transforme sua paixão em performance extraordinária.
           </p>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+          <div className="flex flex-col gap-3 md:gap-4 justify-center items-center px-4">
             <button 
               onClick={() => setCurrentView("products")}
-              className="group bg-white text-green-800 px-8 py-4 rounded-full font-bold text-lg hover:bg-green-50 transition-all duration-300 flex items-center space-x-2 shadow-lg"
+              className="w-full max-w-xs md:w-auto group bg-white text-green-800 px-6 md:px-8 py-3 md:py-4 rounded-full font-bold text-base md:text-lg hover:bg-green-50 transition-all duration-300 flex items-center justify-center space-x-2 shadow-lg"
             >
               <span>Explorar Produtos</span>
-              <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="h-4 md:h-5 w-4 md:w-5 group-hover:translate-x-1 transition-transform" />
             </button>
             <button 
               onClick={() => setCurrentView("products")}
-              className="border-2 border-white text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-white hover:text-green-800 transition-all duration-300"
+              className="w-full max-w-xs md:w-auto border-2 border-white text-white px-6 md:px-8 py-3 md:py-4 rounded-full font-bold text-base md:text-lg hover:bg-white hover:text-green-800 transition-all duration-300"
             >
               Ver Promoções
             </button>
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-3 gap-8 mt-16 max-w-2xl mx-auto">
+          <div className="grid grid-cols-3 gap-4 md:gap-8 mt-12 md:mt-16 max-w-2xl mx-auto px-4">
             <div className="text-center">
-              <div className="text-3xl md:text-4xl font-bold mb-2">1000+</div>
-              <div className="text-green-200 text-sm">Produtos</div>
+              <div className="text-xl md:text-3xl lg:text-4xl font-bold mb-1 md:mb-2">1000+</div>
+              <div className="text-green-200 text-xs md:text-sm">Produtos</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl md:text-4xl font-bold mb-2">50k+</div>
-              <div className="text-green-200 text-sm">Clientes</div>
+              <div className="text-xl md:text-3xl lg:text-4xl font-bold mb-1 md:mb-2">50k+</div>
+              <div className="text-green-200 text-xs md:text-sm">Clientes</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl md:text-4xl font-bold mb-2">98%</div>
-              <div className="text-green-200 text-sm">Satisfação</div>
+              <div className="text-xl md:text-3xl lg:text-4xl font-bold mb-1 md:mb-2">98%</div>
+              <div className="text-green-200 text-xs md:text-sm">Satisfação</div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Animated Elements */}
-      <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">
+      {/* Animated Elements - Hidden on mobile */}
+      <div className="hidden md:block absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">
         <div className="w-6 h-10 border-2 border-white rounded-full flex justify-center">
           <div className="w-1 h-3 bg-white rounded-full mt-2 animate-pulse"></div>
         </div>

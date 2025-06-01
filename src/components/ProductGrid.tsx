@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Heart, ShoppingCart, Star, Filter, Eye } from "lucide-react";
+import MobileProductCard from "./MobileProductCard";
 
 const ProductGrid = ({ addToCart, toggleFavorite, favorites, featured = false, setCurrentView }) => {
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -104,20 +105,68 @@ const ProductGrid = ({ addToCart, toggleFavorite, favorites, featured = false, s
   const displayedProducts = featured ? filteredProducts.slice(0, 4) : filteredProducts;
 
   return (
-    <section className="py-16 bg-gray-50">
+    <section className="py-8 md:py-16 bg-gray-50 pt-32 md:pt-20">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
+        <div className="text-center mb-8 md:mb-12">
+          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-800 mb-4">
             {featured ? "Produtos em Destaque" : "Nossos Produtos"}
           </h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">
+          <p className="text-gray-600 max-w-2xl mx-auto text-sm md:text-base">
             Descubra nossa coleção exclusiva de equipamentos esportivos. 
             Qualidade premium para performance máxima.
           </p>
         </div>
 
+        {/* Mobile Filters */}
         {!featured && (
-          <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+          <div className="md:hidden bg-white rounded-lg shadow-md p-4 mb-6">
+            <div className="flex items-center space-x-2 mb-3">
+              <Filter className="h-4 w-4 text-gray-600" />
+              <span className="font-semibold text-gray-800 text-sm">Filtros</span>
+            </div>
+            
+            <div className="space-y-3">
+              <select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="w-full p-2 border border-gray-300 rounded-lg text-sm"
+              >
+                {categories.map(category => (
+                  <option key={category.value} value={category.value}>
+                    {category.label}
+                  </option>
+                ))}
+              </select>
+              
+              <select
+                value={priceRange}
+                onChange={(e) => setPriceRange(e.target.value)}
+                className="w-full p-2 border border-gray-300 rounded-lg text-sm"
+              >
+                {priceRanges.map(range => (
+                  <option key={range.value} value={range.value}>
+                    {range.label}
+                  </option>
+                ))}
+              </select>
+              
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="w-full p-2 border border-gray-300 rounded-lg text-sm"
+              >
+                <option value="name">Nome</option>
+                <option value="price-low">Menor preço</option>
+                <option value="price-high">Maior preço</option>
+                <option value="rating">Melhor avaliação</option>
+              </select>
+            </div>
+          </div>
+        )}
+
+        {/* Desktop Filters */}
+        {!featured && (
+          <div className="hidden md:block bg-white rounded-lg shadow-md p-6 mb-8">
             <div className="flex items-center space-x-4 mb-4">
               <Filter className="h-5 w-5 text-gray-600" />
               <span className="font-semibold text-gray-800">Filtros</span>
@@ -171,7 +220,26 @@ const ProductGrid = ({ addToCart, toggleFavorite, favorites, featured = false, s
           </div>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        {/* Mobile Product Grid */}
+        <div className="md:hidden grid grid-cols-1 gap-4">
+          {displayedProducts.map((product) => {
+            const isFavorite = favorites.some(fav => fav.id === product.id);
+            
+            return (
+              <MobileProductCard
+                key={product.id}
+                product={product}
+                isFavorite={isFavorite}
+                addToCart={addToCart}
+                toggleFavorite={toggleFavorite}
+                setCurrentView={setCurrentView}
+              />
+            );
+          })}
+        </div>
+
+        {/* Desktop Product Grid */}
+        <div className="hidden md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {displayedProducts.map((product) => {
             const isFavorite = favorites.some(fav => fav.id === product.id);
             
@@ -268,10 +336,10 @@ const ProductGrid = ({ addToCart, toggleFavorite, favorites, featured = false, s
         </div>
 
         {featured && (
-          <div className="text-center mt-12">
+          <div className="text-center mt-8 md:mt-12">
             <button 
               onClick={() => setCurrentView("products")}
-              className="bg-green-600 text-white px-8 py-4 rounded-full font-semibold hover:bg-green-700 transition-colors duration-300 text-lg"
+              className="bg-green-600 text-white px-6 md:px-8 py-3 md:py-4 rounded-full font-semibold hover:bg-green-700 transition-colors duration-300 text-base md:text-lg"
             >
               Ver Todos os Produtos
             </button>
