@@ -22,9 +22,9 @@ const Hero = ({ setCurrentView }) => {
 
           {/* Main Heading */}
           <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
-            DESPERTE A
+            DESPERTE O
             <span className="block bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
-              FERA
+              CRAQUE
             </span>
             QUE HÁ EM VOCÊ
           </h1>
