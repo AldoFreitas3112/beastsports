@@ -5,7 +5,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 const ProductDetails = ({ productId, setCurrentView, addToCart, toggleFavorite, favorites }) => {
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState("M");
-  const [isBuying, setIsBuying] = useState(false);
 
   const products = [
     {
@@ -124,13 +123,8 @@ const ProductDetails = ({ productId, setCurrentView, addToCart, toggleFavorite, 
   };
 
   const handleBuyNow = () => {
-    setIsBuying(true);
-    // Simular processo de compra direta
-    setTimeout(() => {
-      setIsBuying(false);
-      alert("Redirecionando para o checkout...");
-      // Aqui seria redirecionado para uma página de checkout ou gateway de pagamento
-    }, 1500);
+    // Redirecionar para checkout com dados do produto
+    setCurrentView(`checkout-product-${product.id}-${quantity}-${selectedSize}`);
   };
 
   return (
@@ -243,11 +237,10 @@ const ProductDetails = ({ productId, setCurrentView, addToCart, toggleFavorite, 
               {/* Comprar Agora - Botão Principal */}
               <button
                 onClick={handleBuyNow}
-                disabled={isBuying}
-                className="w-full bg-orange-600 text-white py-4 rounded-lg font-bold text-lg hover:bg-orange-700 transition-colors flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-orange-600 text-white py-4 rounded-lg font-bold text-lg hover:bg-orange-700 transition-colors flex items-center justify-center space-x-2"
               >
                 <CreditCard className="h-6 w-6" />
-                <span>{isBuying ? "Processando..." : "Comprar Agora"}</span>
+                <span>Comprar Agora</span>
               </button>
               
               {/* Adicionar ao Carrinho e Favoritos */}

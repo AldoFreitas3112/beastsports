@@ -3,39 +3,12 @@ import { useState } from "react";
 import { Minus, Plus, Trash2, CreditCard, ShoppingBag } from "lucide-react";
 
 const Cart = ({ items, updateQuantity, removeFromCart, setCurrentView }) => {
-  const [isCheckingOut, setIsCheckingOut] = useState(false);
-  const [showCheckout, setShowCheckout] = useState(false);
-  const [formData, setFormData] = useState({
-    email: "",
-    name: "",
-    address: "",
-    city: "",
-    zipCode: "",
-    cardNumber: "",
-    expiryDate: "",
-    cvv: "",
-    cardName: ""
-  });
-
   const total = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   const shipping = total > 100 ? 0 : 15;
   const finalTotal = total + shipping;
 
   const handleCheckout = () => {
-    setIsCheckingOut(true);
-    // Simular processo de pagamento
-    setTimeout(() => {
-      setIsCheckingOut(false);
-      alert("Pedido realizado com sucesso! Você receberá um email de confirmação.");
-      // Limpar carrinho seria implementado aqui
-    }, 2000);
-  };
-
-  const handleInputChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+    setCurrentView("checkout-cart");
   };
 
   if (items.length === 0) {
@@ -137,115 +110,13 @@ const Cart = ({ items, updateQuantity, removeFromCart, setCurrentView }) => {
                 </div>
               </div>
               
-              {!showCheckout ? (
-                <button
-                  onClick={() => setShowCheckout(true)}
-                  className="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors flex items-center justify-center space-x-2"
-                >
-                  <CreditCard className="h-5 w-5" />
-                  <span>Finalizar Compra</span>
-                </button>
-              ) : (
-                <div className="space-y-4">
-                  {/* Checkout Form */}
-                  <div className="space-y-3">
-                    <input
-                      type="email"
-                      name="email"
-                      placeholder="Email"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                    />
-                    <input
-                      type="text"
-                      name="name"
-                      placeholder="Nome Completo"
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                    />
-                    <input
-                      type="text"
-                      name="address"
-                      placeholder="Endereço"
-                      value={formData.address}
-                      onChange={handleInputChange}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                    />
-                    <div className="grid grid-cols-2 gap-3">
-                      <input
-                        type="text"
-                        name="city"
-                        placeholder="Cidade"
-                        value={formData.city}
-                        onChange={handleInputChange}
-                        className="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                      />
-                      <input
-                        type="text"
-                        name="zipCode"
-                        placeholder="CEP"
-                        value={formData.zipCode}
-                        onChange={handleInputChange}
-                        className="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                      />
-                    </div>
-                    
-                    <hr className="my-4" />
-                    
-                    <input
-                      type="text"
-                      name="cardNumber"
-                      placeholder="Número do Cartão"
-                      value={formData.cardNumber}
-                      onChange={handleInputChange}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                    />
-                    <div className="grid grid-cols-2 gap-3">
-                      <input
-                        type="text"
-                        name="expiryDate"
-                        placeholder="MM/AA"
-                        value={formData.expiryDate}
-                        onChange={handleInputChange}
-                        className="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                      />
-                      <input
-                        type="text"
-                        name="cvv"
-                        placeholder="CVV"
-                        value={formData.cvv}
-                        onChange={handleInputChange}
-                        className="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                      />
-                    </div>
-                    <input
-                      type="text"
-                      name="cardName"
-                      placeholder="Nome no Cartão"
-                      value={formData.cardName}
-                      onChange={handleInputChange}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                    />
-                  </div>
-                  
-                  <button
-                    onClick={handleCheckout}
-                    disabled={isCheckingOut}
-                    className="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {isCheckingOut ? "Processando..." : "Confirmar Pagamento"}
-                  </button>
-                  
-                  <button
-                    onClick={() => setShowCheckout(false)}
-                    className="w-full text-gray-600 py-2 rounded-lg hover:bg-gray-100 transition-colors"
-                  >
-                    Voltar
-                  </button>
-                </div>
-              )}
+              <button
+                onClick={handleCheckout}
+                className="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors flex items-center justify-center space-x-2"
+              >
+                <CreditCard className="h-5 w-5" />
+                <span>Finalizar Compra</span>
+              </button>
             </div>
           </div>
         </div>
