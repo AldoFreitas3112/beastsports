@@ -1,6 +1,8 @@
+
 import { useState } from "react";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
+import RotatingBanner from "@/components/RotatingBanner";
 import ProductGrid from "@/components/ProductGrid";
 import Footer from "@/components/Footer";
 import Cart from "@/components/Cart";
@@ -172,6 +174,7 @@ const Index = () => {
         return (
           <>
             <Hero setCurrentView={setCurrentView} />
+            <RotatingBanner />
             <ProductGrid 
               addToCart={addToCart}
               toggleFavorite={toggleFavorite}
