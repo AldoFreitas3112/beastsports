@@ -55,6 +55,21 @@ const Index = () => {
   };
 
   const renderContent = () => {
+    // Check if currentView starts with "product-"
+    if (currentView.startsWith("product-")) {
+      const productId = currentView.replace("product-", "");
+      const ProductDetails = require("@/components/ProductDetails").default;
+      return (
+        <ProductDetails
+          productId={productId}
+          setCurrentView={setCurrentView}
+          addToCart={addToCart}
+          toggleFavorite={toggleFavorite}
+          favorites={favorites}
+        />
+      );
+    }
+
     switch (currentView) {
       case "products":
         return (

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Heart, ShoppingCart, Star, Filter } from "lucide-react";
+import { Heart, ShoppingCart, Star, Filter, Eye } from "lucide-react";
 
 const ProductGrid = ({ addToCart, toggleFavorite, favorites, featured = false, setCurrentView }) => {
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -116,7 +116,6 @@ const ProductGrid = ({ addToCart, toggleFavorite, favorites, featured = false, s
           </p>
         </div>
 
-        {/* Filters */}
         {!featured && (
           <div className="bg-white rounded-lg shadow-md p-6 mb-8">
             <div className="flex items-center space-x-4 mb-4">
@@ -172,7 +171,6 @@ const ProductGrid = ({ addToCart, toggleFavorite, favorites, featured = false, s
           </div>
         )}
 
-        {/* Products Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {displayedProducts.map((product) => {
             const isFavorite = favorites.some(fav => fav.id === product.id);
@@ -186,14 +184,19 @@ const ProductGrid = ({ addToCart, toggleFavorite, favorites, featured = false, s
                     className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500"
                   />
                   
-                  {/* Discount Badge */}
                   {product.discount && (
                     <div className="absolute top-4 left-4 bg-red-500 text-white px-2 py-1 rounded-full text-sm font-bold">
                       -{product.discount}%
                     </div>
                   )}
                   
-                  {/* Favorite Button */}
+                  <button
+                    onClick={() => setCurrentView(`product-${product.id}`)}
+                    className="absolute top-4 right-12 p-2 bg-white/80 text-gray-600 rounded-full hover:bg-green-500 hover:text-white transition-all duration-300 opacity-0 group-hover:opacity-100"
+                  >
+                    <Eye className="h-4 w-4" />
+                  </button>
+                  
                   <button
                     onClick={() => toggleFavorite(product)}
                     className={`absolute top-4 right-4 p-2 rounded-full transition-all duration-300 ${
@@ -207,7 +210,10 @@ const ProductGrid = ({ addToCart, toggleFavorite, favorites, featured = false, s
                 </div>
                 
                 <div className="p-6">
-                  <h3 className="font-bold text-lg text-gray-800 mb-2 group-hover:text-green-600 transition-colors">
+                  <h3 
+                    className="font-bold text-lg text-gray-800 mb-2 group-hover:text-green-600 transition-colors cursor-pointer"
+                    onClick={() => setCurrentView(`product-${product.id}`)}
+                  >
                     {product.name}
                   </h3>
                   
@@ -215,7 +221,6 @@ const ProductGrid = ({ addToCart, toggleFavorite, favorites, featured = false, s
                     {product.description}
                   </p>
                   
-                  {/* Rating */}
                   <div className="flex items-center space-x-1 mb-3">
                     {[...Array(5)].map((_, i) => (
                       <Star
@@ -230,7 +235,6 @@ const ProductGrid = ({ addToCart, toggleFavorite, favorites, featured = false, s
                     <span className="text-sm text-gray-600 ml-2">({product.rating})</span>
                   </div>
                   
-                  {/* Price */}
                   <div className="flex items-center space-x-2 mb-4">
                     <span className="text-2xl font-bold text-green-600">
                       R$ {product.price.toFixed(2)}
@@ -242,14 +246,21 @@ const ProductGrid = ({ addToCart, toggleFavorite, favorites, featured = false, s
                     )}
                   </div>
                   
-                  {/* Add to Cart Button */}
-                  <button
-                    onClick={() => addToCart(product)}
-                    className="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors duration-300 flex items-center justify-center space-x-2 group"
-                  >
-                    <ShoppingCart className="h-4 w-4 group-hover:scale-110 transition-transform" />
-                    <span>Adicionar ao Carrinho</span>
-                  </button>
+                  <div className="flex space-x-2">
+                    <button
+                      onClick={() => addToCart(product)}
+                      className="flex-1 bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors duration-300 flex items-center justify-center space-x-2 group"
+                    >
+                      <ShoppingCart className="h-4 w-4 group-hover:scale-110 transition-transform" />
+                      <span>Carrinho</span>
+                    </button>
+                    <button
+                      onClick={() => setCurrentView(`product-${product.id}`)}
+                      className="px-4 bg-gray-100 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-200 transition-colors duration-300"
+                    >
+                      Ver
+                    </button>
+                  </div>
                 </div>
               </div>
             );
