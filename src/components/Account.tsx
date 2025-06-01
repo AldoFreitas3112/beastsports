@@ -1,8 +1,13 @@
 import { useState } from "react";
-import { User, Camera, Heart, Package, Settings, LogOut } from "lucide-react";
+import { User, Camera, Heart, Package, Settings, LogOut, Eye } from "lucide-react";
+import { useOrders } from "@/hooks/useOrders";
+import OrderDetails from "./OrderDetails";
 
 const Account = ({ user, setUser, favorites, setCurrentView }) => {
   const [activeTab, setActiveTab] = useState("profile");
+  const [selectedOrderId, setSelectedOrderId] = useState(null);
+  const { orders } = useOrders(user?.email);
+  
   const [profileData, setProfileData] = useState({
     name: user?.name || "",
     email: user?.email || "",
@@ -43,22 +48,40 @@ const Account = ({ user, setUser, favorites, setCurrentView }) => {
     }
   };
 
-  const orders = [
-    {
-      id: "BS001",
-      date: "2024-01-15",
-      total: 159.80,
-      status: "Entregue",
-      items: 2
-    },
-    {
-      id: "BS002", 
-      date: "2024-01-10",
-      total: 89.90,
-      status: "Em trânsito",
-      items: 1
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'Pendente':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'Processando':
+        return 'bg-blue-100 text-blue-800';
+      case 'Em trânsito':
+        return 'bg-orange-100 text-orange-800';
+      case 'Entregue':
+        return 'bg-green-100 text-green-800';
+      case 'Cancelado':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
-  ];
+  };
+
+  if (selectedOrderId) {
+    const order = orders.find(o => o.id === selectedOrderId);
+    if (order) {
+      return (
+        <div className="min-h-screen pt-20 bg-gray-50">
+          <div className="container mx-auto px-4 py-8">
+            <div className="max-w-6xl mx-auto">
+              <OrderDetails 
+                order={order} 
+                onBack={() => setSelectedOrderId(null)} 
+              />
+            </div>
+          </div>
+        </div>
+      );
+    }
+  }
 
   return (
     <div className="min-h-screen pt-20 bg-gray-50">
@@ -67,7 +90,6 @@ const Account = ({ user, setUser, favorites, setCurrentView }) => {
           <h1 className="text-3xl font-bold text-gray-800 mb-8">Minha Conta</h1>
           
           <div className="grid lg:grid-cols-4 gap-8">
-            {/* Sidebar */}
             <div className="lg:col-span-1">
               <div className="bg-white rounded-lg shadow-md p-6">
                 <div className="text-center mb-6">
@@ -164,7 +186,6 @@ const Account = ({ user, setUser, favorites, setCurrentView }) => {
               </div>
             </div>
             
-            {/* Main Content */}
             <div className="lg:col-span-3">
               <div className="bg-white rounded-lg shadow-md p-6">
                 {activeTab === "profile" && (
@@ -264,29 +285,57 @@ const Account = ({ user, setUser, favorites, setCurrentView }) => {
                 {activeTab === "orders" && (
                   <div>
                     <h2 className="text-2xl font-bold text-gray-800 mb-6">Meus Pedidos</h2>
-                    <div className="space-y-4">
-                      {orders.map((order) => (
-                        <div key={order.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                          <div className="flex justify-between items-start">
-                            <div>
-                              <h3 className="font-semibold text-gray-800">Pedido #{order.id}</h3>
-                              <p className="text-sm text-gray-600">Data: {order.date}</p>
-                              <p className="text-sm text-gray-600">{order.items} item(s)</p>
-                            </div>
-                            <div className="text-right">
-                              <p className="font-bold text-green-600">R$ {order.total.toFixed(2)}</p>
-                              <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
-                                order.status === "Entregue" 
-                                  ? "bg-green-100 text-green-800" 
-                                  : "bg-blue-100 text-blue-800"
-                              }`}>
-                                {order.status}
-                              </span>
+                    {orders.length === 0 ? (
+                      <div className="text-center py-12">
+                        <Package className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+                        <p className="text-gray-600 mb-4">Você ainda não fez nenhum pedido.</p>
+                        <button
+                          onClick={() => setCurrentView("products")}
+                          className="text-green-600 hover:text-green-700 font-medium"
+                        >
+                          Explorar Produtos
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        {orders.map((order) => (
+                          <div key={order.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                            <div className="flex justify-between items-start">
+                              <div>
+                                <h3 className="font-semibold text-gray-800">Pedido #{order.id}</h3>
+                                <p className="text-sm text-gray-600">Data: {new Date(order.date).toLocaleDateString('pt-BR')}</p>
+                                <p className="text-sm text-gray-600">{order.items.length} item(s)</p>
+                                <div className="flex flex-wrap gap-2 mt-2">
+                                  {order.items.slice(0, 3).map((item, index) => (
+                                    <span key={index} className="text-xs bg-gray-100 px-2 py-1 rounded">
+                                      {item.name} {item.size && `(${item.size})`}
+                                    </span>
+                                  ))}
+                                  {order.items.length > 3 && (
+                                    <span className="text-xs text-gray-500">
+                                      +{order.items.length - 3} mais
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                              <div className="text-right">
+                                <p className="font-bold text-green-600">R$ {order.total.toFixed(2)}</p>
+                                <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
+                                  {order.status}
+                                </span>
+                                <button
+                                  onClick={() => setSelectedOrderId(order.id)}
+                                  className="flex items-center gap-1 text-sm text-green-600 hover:text-green-700 mt-2"
+                                >
+                                  <Eye className="h-4 w-4" />
+                                  Ver detalhes
+                                </button>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      ))}
-                    </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 )}
                 
