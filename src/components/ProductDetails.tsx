@@ -1,11 +1,11 @@
-
 import { useState } from "react";
-import { ArrowLeft, Heart, ShoppingCart, Star, Plus, Minus } from "lucide-react";
+import { ArrowLeft, Heart, ShoppingCart, Star, Plus, Minus, CreditCard } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const ProductDetails = ({ productId, setCurrentView, addToCart, toggleFavorite, favorites }) => {
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState("M");
+  const [isBuying, setIsBuying] = useState(false);
 
   const products = [
     {
@@ -123,6 +123,16 @@ const ProductDetails = ({ productId, setCurrentView, addToCart, toggleFavorite, 
     }
   };
 
+  const handleBuyNow = () => {
+    setIsBuying(true);
+    // Simular processo de compra direta
+    setTimeout(() => {
+      setIsBuying(false);
+      alert("Redirecionando para o checkout...");
+      // Aqui seria redirecionado para uma página de checkout ou gateway de pagamento
+    }, 1500);
+  };
+
   return (
     <div className="min-h-screen pt-20 bg-gray-50">
       <div className="container mx-auto px-4 py-8">
@@ -229,24 +239,37 @@ const ProductDetails = ({ productId, setCurrentView, addToCart, toggleFavorite, 
             </div>
 
             {/* Action Buttons */}
-            <div className="flex space-x-4 mb-6">
+            <div className="space-y-3 mb-6">
+              {/* Comprar Agora - Botão Principal */}
               <button
-                onClick={handleAddToCart}
-                className="flex-1 bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors flex items-center justify-center space-x-2"
+                onClick={handleBuyNow}
+                disabled={isBuying}
+                className="w-full bg-orange-600 text-white py-4 rounded-lg font-bold text-lg hover:bg-orange-700 transition-colors flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <ShoppingCart className="h-5 w-5" />
-                <span>Adicionar ao Carrinho</span>
+                <CreditCard className="h-6 w-6" />
+                <span>{isBuying ? "Processando..." : "Comprar Agora"}</span>
               </button>
-              <button
-                onClick={() => toggleFavorite(product)}
-                className={`p-3 rounded-lg border transition-colors ${
-                  isFavorite
-                    ? "border-red-500 bg-red-500 text-white"
-                    : "border-gray-300 text-gray-600 hover:border-red-500 hover:text-red-500"
-                }`}
-              >
-                <Heart className={`h-5 w-5 ${isFavorite ? "fill-current" : ""}`} />
-              </button>
+              
+              {/* Adicionar ao Carrinho e Favoritos */}
+              <div className="flex space-x-3">
+                <button
+                  onClick={handleAddToCart}
+                  className="flex-1 bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors flex items-center justify-center space-x-2"
+                >
+                  <ShoppingCart className="h-5 w-5" />
+                  <span>Adicionar ao Carrinho</span>
+                </button>
+                <button
+                  onClick={() => toggleFavorite(product)}
+                  className={`p-3 rounded-lg border transition-colors ${
+                    isFavorite
+                      ? "border-red-500 bg-red-500 text-white"
+                      : "border-gray-300 text-gray-600 hover:border-red-500 hover:text-red-500"
+                  }`}
+                >
+                  <Heart className={`h-5 w-5 ${isFavorite ? "fill-current" : ""}`} />
+                </button>
+              </div>
             </div>
           </div>
         </div>
