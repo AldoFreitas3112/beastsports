@@ -1,8 +1,8 @@
 import { ArrowRight, Zap } from "lucide-react";
-
-const Hero = ({ setCurrentView }) => {
-  return (
-    <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-green-600 via-green-700 to-green-800 overflow-hidden pt-20 md:pt-0">
+const Hero = ({
+  setCurrentView
+}) => {
+  return <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-green-600 via-green-700 to-green-800 overflow-hidden pt-20 md:pt-0">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute top-10 left-10 w-20 h-20 border-2 border-white rounded-full"></div>
@@ -36,17 +36,11 @@ const Hero = ({ setCurrentView }) => {
 
           {/* CTA Buttons */}
           <div className="flex flex-col gap-3 md:gap-4 justify-center items-center px-4">
-            <button 
-              onClick={() => setCurrentView("products")}
-              className="w-full max-w-xs md:w-auto group bg-white text-green-800 px-6 md:px-8 py-3 md:py-4 rounded-full font-bold text-base md:text-lg hover:bg-green-50 transition-all duration-300 flex items-center justify-center space-x-2 shadow-lg"
-            >
+            <button onClick={() => setCurrentView("products")} className="w-full max-w-xs md:w-auto group bg-white text-green-800 px-6 md:px-8 py-3 md:py-4 rounded-full font-bold text-base md:text-lg hover:bg-green-50 transition-all duration-300 flex items-center justify-center space-x-2 shadow-lg">
               <span>Explorar Produtos</span>
               <ArrowRight className="h-4 md:h-5 w-4 md:w-5 group-hover:translate-x-1 transition-transform" />
             </button>
-            <button 
-              onClick={() => setCurrentView("products")}
-              className="w-full max-w-xs md:w-auto border-2 border-white text-white px-6 md:px-8 py-3 md:py-4 rounded-full font-bold text-base md:text-lg hover:bg-white hover:text-green-800 transition-all duration-300"
-            >
+            <button onClick={() => setCurrentView("products")} className="w-full max-w-xs md:w-auto border-2 border-white text-white px-6 md:px-8 py-3 md:py-4 rounded-full font-bold text-base md:text-lg hover:bg-white hover:text-green-800 transition-all duration-300">
               Ver Promoções
             </button>
           </div>
@@ -54,7 +48,8 @@ const Hero = ({ setCurrentView }) => {
           {/* Stats */}
           <div className="grid grid-cols-3 gap-4 md:gap-8 mt-12 md:mt-16 max-w-2xl mx-auto px-4">
             <div className="text-center">
-              <div className="text-xl md:text-3xl lg:text-4xl font-bold mb-1 md:mb-2">1000+</div>
+              <div className="text-xl md:text-3xl lg:text-4xl font-bold mb-1 md:mb-2">
+            </div>
               <div className="text-green-200 text-xs md:text-sm">Produtos</div>
             </div>
             <div className="text-center">
@@ -75,8 +70,6 @@ const Hero = ({ setCurrentView }) => {
           <div className="w-1 h-3 bg-white rounded-full mt-2 animate-pulse"></div>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default Hero;
