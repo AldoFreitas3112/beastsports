@@ -1,10 +1,16 @@
 
 import { useState } from "react";
-import { User, Mail, Lock, Eye, EyeOff } from "lucide-react";
+import { User, Mail, Lock, Eye, EyeOff, AlertCircle } from "lucide-react";
 
 const Login = ({ setUser, setCurrentView }) => {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
+  const [errors, setErrors] = useState({
+    email: "",
+    password: "",
+    confirmPassword: "",
+    general: ""
+  });
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -13,35 +19,104 @@ const Login = ({ setUser, setCurrentView }) => {
   });
 
   const handleInputChange = (e) => {
+    const { name, value } = e.target;
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [name]: value
     });
+    
+    // Limpar erro do campo quando o usuário começar a digitar
+    if (errors[name]) {
+      setErrors({
+        ...errors,
+        [name]: "",
+        general: ""
+      });
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors = {
+      email: "",
+      password: "",
+      confirmPassword: "",
+      general: ""
+    };
+
+    // Validar email
+    if (!formData.email) {
+      newErrors.email = "Email é obrigatório";
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "Email inválido";
+    }
+
+    // Validar senha
+    if (!formData.password) {
+      newErrors.password = "Senha é obrigatória";
+    } else if (formData.password.length < 6) {
+      newErrors.password = "Senha deve ter pelo menos 6 caracteres";
+    }
+
+    // Validar confirmação de senha (apenas no cadastro)
+    if (!isLogin) {
+      if (!formData.confirmPassword) {
+        newErrors.confirmPassword = "Confirmação de senha é obrigatória";
+      } else if (formData.password !== formData.confirmPassword) {
+        newErrors.confirmPassword = "As senhas não coincidem";
+      }
+
+      if (!formData.name) {
+        newErrors.general = "Nome é obrigatório";
+      }
+    }
+
+    return newErrors;
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     
+    const formErrors = validateForm();
+    const hasErrors = Object.values(formErrors).some(error => error !== "");
+    
+    if (hasErrors) {
+      setErrors(formErrors);
+      return;
+    }
+    
     if (isLogin) {
-      // Simular login
-      if (formData.email && formData.password) {
+      // Simular validação de login
+      // Aqui você pode adicionar uma lista de emails/senhas válidos para teste
+      const validCredentials = [
+        { email: "admin@test.com", password: "123456" },
+        { email: "user@test.com", password: "password" }
+      ];
+      
+      const isValidUser = validCredentials.some(
+        cred => cred.email === formData.email && cred.password === formData.password
+      );
+      
+      if (isValidUser) {
         setUser({
-          name: formData.name || formData.email.split("@")[0],
+          name: formData.email.split("@")[0],
           email: formData.email,
           avatar: null
         });
         setCurrentView("home");
+      } else {
+        setErrors({
+          ...errors,
+          general: "Email ou senha incorretos"
+        });
       }
     } else {
-      // Simular cadastro
-      if (formData.email && formData.password && formData.password === formData.confirmPassword) {
-        setUser({
-          name: formData.name,
-          email: formData.email,
-          avatar: null
-        });
-        setCurrentView("home");
-      }
+      // Cadastro - simular sucesso
+      setUser({
+        name: formData.name,
+        email: formData.email,
+        avatar: null
+      });
+      setCurrentView("home");
     }
   };
 
@@ -64,6 +139,14 @@ const Login = ({ setUser, setCurrentView }) => {
                 }
               </p>
             </div>
+
+            {/* Erro geral */}
+            {errors.general && (
+              <div className="mb-6 p-3 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2">
+                <AlertCircle className="h-4 w-4 text-red-500" />
+                <span className="text-sm text-red-600">{errors.general}</span>
+              </div>
+            )}
 
             <form onSubmit={handleSubmit} className="space-y-6">
               {!isLogin && (
@@ -97,11 +180,16 @@ const Login = ({ setUser, setCurrentView }) => {
                     name="email"
                     value={formData.email}
                     onChange={handleInputChange}
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
+                      errors.email ? 'border-red-300' : 'border-gray-300'
+                    }`}
                     placeholder="seu@email.com"
                     required
                   />
                 </div>
+                {errors.email && (
+                  <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+                )}
               </div>
 
               <div>
@@ -115,7 +203,9 @@ const Login = ({ setUser, setCurrentView }) => {
                     name="password"
                     value={formData.password}
                     onChange={handleInputChange}
-                    className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
+                      errors.password ? 'border-red-300' : 'border-gray-300'
+                    }`}
                     placeholder="••••••••"
                     required
                   />
@@ -127,6 +217,9 @@ const Login = ({ setUser, setCurrentView }) => {
                     {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                   </button>
                 </div>
+                {errors.password && (
+                  <p className="mt-1 text-sm text-red-600">{errors.password}</p>
+                )}
               </div>
 
               {!isLogin && (
@@ -141,11 +234,16 @@ const Login = ({ setUser, setCurrentView }) => {
                       name="confirmPassword"
                       value={formData.confirmPassword}
                       onChange={handleInputChange}
-                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
+                        errors.confirmPassword ? 'border-red-300' : 'border-gray-300'
+                      }`}
                       placeholder="••••••••"
                       required
                     />
                   </div>
+                  {errors.confirmPassword && (
+                    <p className="mt-1 text-sm text-red-600">{errors.confirmPassword}</p>
+                  )}
                 </div>
               )}
 
@@ -173,7 +271,11 @@ const Login = ({ setUser, setCurrentView }) => {
                 {isLogin ? "Não tem uma conta?" : "Já tem uma conta?"}
               </span>
               <button
-                onClick={() => setIsLogin(!isLogin)}
+                onClick={() => {
+                  setIsLogin(!isLogin);
+                  setErrors({ email: "", password: "", confirmPassword: "", general: "" });
+                  setFormData({ name: "", email: "", password: "", confirmPassword: "" });
+                }}
                 className="ml-2 text-green-600 hover:text-green-700 font-semibold"
               >
                 {isLogin ? "Cadastre-se" : "Entrar"}
@@ -188,6 +290,15 @@ const Login = ({ setUser, setCurrentView }) => {
                 Continuar sem login
               </button>
             </div>
+
+            {/* Credenciais de teste para demonstração */}
+            {isLogin && (
+              <div className="mt-6 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                <p className="text-xs text-blue-600 font-medium mb-1">Credenciais de teste:</p>
+                <p className="text-xs text-blue-600">admin@test.com / 123456</p>
+                <p className="text-xs text-blue-600">user@test.com / password</p>
+              </div>
+            )}
           </div>
         </div>
       </div>
