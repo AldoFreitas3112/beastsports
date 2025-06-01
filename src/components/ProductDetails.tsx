@@ -4,81 +4,110 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { products } from "@/data/products";
 
 const ProductDetails = ({ productId, setCurrentView, addToCart, toggleFavorite, favorites }) => {
-  const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState("M");
+  const [selectedColor, setSelectedColor] = useState("Preto");
+  const [quantity, setQuantity] = useState(1);
 
   const product = products.find(p => p.id === parseInt(productId));
-  
+
   if (!product) {
     return (
       <div className="min-h-screen pt-20 bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">Produto não encontrado</h2>
-          <button
-            onClick={() => setCurrentView("products")}
-            className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors"
-          >
-            Voltar aos Produtos
-          </button>
-        </div>
+        <p className="text-xl text-gray-600">Produto não encontrado</p>
       </div>
     );
   }
 
   const isFavorite = favorites.some(fav => fav.id === product.id);
 
-  const increaseQuantity = () => setQuantity(prev => prev + 1);
-  const decreaseQuantity = () => setQuantity(prev => Math.max(1, prev - 1));
-
   const handleAddToCart = () => {
-    for (let i = 0; i < quantity; i++) {
-      addToCart({ ...product, selectedSize });
-    }
+    const productWithOptions = {
+      ...product,
+      selectedSize,
+      selectedColor,
+      quantity
+    };
+    addToCart(productWithOptions);
   };
 
   const handleBuyNow = () => {
-    // Redirecionar para checkout com dados do produto
     setCurrentView(`checkout-product-${product.id}-${quantity}-${selectedSize}`);
+  };
+
+  const decreaseQuantity = () => {
+    if (quantity > 1) {
+      setQuantity(quantity - 1);
+    }
+  };
+
+  const increaseQuantity = () => {
+    setQuantity(quantity + 1);
   };
 
   return (
     <div className="min-h-screen pt-20 bg-gray-50">
-      <div className="container mx-auto px-4 py-8">
-        {/* Back Button */}
+      <header className="fixed top-0 left-0 right-0 bg-white shadow-md z-50">
+        <div className="container mx-auto px-4 py-2 flex items-center justify-between">
+          <button
+            onClick={() => setCurrentView("home")}
+            className="text-gray-600 hover:text-green-600"
+          >
+            Início
+          </button>
+          <div className="flex items-center space-x-4">
+            <button
+              onClick={() => setCurrentView("cart")}
+              className="relative p-2 text-gray-700 hover:text-green-600 transition-colors"
+            >
+              <ShoppingCart className="h-6 w-6" />
+            </button>
+            <button
+              onClick={() => setCurrentView("login")}
+              className="p-2 text-gray-700 hover:text-green-600 transition-colors"
+            >
+              <User className="h-6 w-6" />
+            </button>
+          </div>
+        </div>
+      </header>
+      <div className="container mx-auto px-4 py-4">
         <button
           onClick={() => setCurrentView("products")}
-          className="flex items-center space-x-2 text-gray-600 hover:text-green-600 mb-8 transition-colors"
+          className="flex items-center space-x-2 text-gray-600 hover:text-green-600 mb-6"
         >
           <ArrowLeft className="h-5 w-5" />
-          <span>Voltar aos Produtos</span>
+          <span>Voltar aos produtos</span>
         </button>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {/* Product Image */}
-          <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+        <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+          <div className="grid md:grid-cols-2 gap-8 p-8">
+            {/* Product Image */}
             <div className="relative">
               <img
                 src={product.image}
                 alt={product.name}
-                className="w-full h-96 object-cover"
+                className="w-full h-96 object-cover rounded-lg"
               />
-              {product.discount && (
-                <div className="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold">
-                  -{product.discount}%
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Product Info */}
-          <div className="bg-white rounded-xl shadow-lg p-8">
-            <div className="mb-6">
-              <h1 className="text-3xl font-bold text-gray-800 mb-2">{product.name}</h1>
-              <p className="text-gray-600 mb-4">{product.description}</p>
               
-              {/* Rating */}
-              <div className="flex items-center space-x-2 mb-4">
-                <div className="flex items-center space-x-1">
+              <button
+                onClick={() => toggleFavorite(product)}
+                className={`absolute top-4 right-4 p-3 rounded-full ${
+                  isFavorite 
+                    ? "bg-red-500 text-white" 
+                    : "bg-white text-gray-600"
+                } shadow-lg hover:scale-110 transition-transform`}
+              >
+                <Heart className={`h-6 w-6 ${isFavorite ? "fill-current" : ""}`} />
+              </button>
+            </div>
+
+            {/* Product Info */}
+            <div className="space-y-6">
+              <div>
+                <h1 className="text-3xl font-bold text-gray-800 mb-2">{product.name}</h1>
+                <p className="text-gray-600 mb-4">{product.description}</p>
+                
+                <div className="flex items-center space-x-1 mb-4">
                   {[...Array(5)].map((_, i) => (
                     <Star
                       key={i}
@@ -89,123 +118,164 @@ const ProductDetails = ({ productId, setCurrentView, addToCart, toggleFavorite, 
                       }`}
                     />
                   ))}
+                  <span className="text-gray-600 ml-2">({product.rating})</span>
                 </div>
-                <span className="text-gray-600">({product.rating})</span>
               </div>
 
               {/* Price */}
-              <div className="flex items-center space-x-3 mb-6">
+              <div className="flex items-center space-x-4 mb-6">
                 <span className="text-3xl font-bold text-green-600">
                   R$ {product.price.toFixed(2)}
                 </span>
-                {product.originalPrice && (
-                  <span className="text-xl text-gray-500 line-through">
-                    R$ {product.originalPrice.toFixed(2)}
-                  </span>
-                )}
               </div>
-            </div>
 
-            {/* Size Selection */}
-            <div className="mb-6">
-              <h3 className="text-lg font-semibold mb-3">Tamanho</h3>
-              <div className="flex space-x-2">
-                {product.sizes.map(size => (
+              {/* Size Selection */}
+              <div>
+                <h3 className="text-lg font-semibold mb-3">Tamanho</h3>
+                <div className="flex space-x-3">
+                  {product.sizes.map((size) => (
+                    <button
+                      key={size}
+                      onClick={() => setSelectedSize(size)}
+                      className={`px-4 py-2 border rounded-lg font-medium ${
+                        selectedSize === size
+                          ? "border-green-600 bg-green-50 text-green-600"
+                          : "border-gray-300 hover:border-gray-400"
+                      }`}
+                    >
+                      {size}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Color Selection */}
+              <div>
+                <h3 className="text-lg font-semibold mb-3">Cor</h3>
+                <div className="flex space-x-3">
+                  {product.colors.map((color) => (
+                    <button
+                      key={color}
+                      onClick={() => setSelectedColor(color)}
+                      className={`px-4 py-2 border rounded-lg font-medium ${
+                        selectedColor === color
+                          ? "border-green-600 bg-green-50 text-green-600"
+                          : "border-gray-300 hover:border-gray-400"
+                      }`}
+                    >
+                      {color}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Quantity */}
+              <div>
+                <h3 className="text-lg font-semibold mb-3">Quantidade</h3>
+                <div className="flex items-center space-x-3">
                   <button
-                    key={size}
-                    onClick={() => setSelectedSize(size)}
-                    className={`px-4 py-2 border rounded-lg font-medium transition-colors ${
-                      selectedSize === size
-                        ? "border-green-600 bg-green-600 text-white"
-                        : "border-gray-300 text-gray-700 hover:border-green-600"
-                    }`}
+                    onClick={decreaseQuantity}
+                    className="p-2 border border-gray-300 rounded-lg hover:bg-gray-100"
                   >
-                    {size}
+                    <Minus className="h-4 w-4" />
                   </button>
-                ))}
+                  <span className="text-xl font-semibold px-4">{quantity}</span>
+                  <button
+                    onClick={increaseQuantity}
+                    className="p-2 border border-gray-300 rounded-lg hover:bg-gray-100"
+                  >
+                    <Plus className="h-4 w-4" />
+                  </button>
+                </div>
               </div>
-            </div>
 
-            {/* Quantity */}
-            <div className="mb-6">
-              <h3 className="text-lg font-semibold mb-3">Quantidade</h3>
-              <div className="flex items-center space-x-3">
+              {/* Action Buttons */}
+              <div className="space-y-3">
                 <button
-                  onClick={decreaseQuantity}
-                  className="p-2 border border-gray-300 rounded-lg hover:border-green-600 transition-colors"
+                  onClick={handleBuyNow}
+                  className="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors flex items-center justify-center space-x-2"
                 >
-                  <Minus className="h-4 w-4" />
+                  <CreditCard className="h-5 w-5" />
+                  <span>Comprar Agora</span>
                 </button>
-                <span className="text-xl font-semibold w-12 text-center">{quantity}</span>
-                <button
-                  onClick={increaseQuantity}
-                  className="p-2 border border-gray-300 rounded-lg hover:border-green-600 transition-colors"
-                >
-                  <Plus className="h-4 w-4" />
-                </button>
-              </div>
-            </div>
-
-            {/* Action Buttons */}
-            <div className="space-y-3 mb-6">
-              {/* Comprar Agora - Botão Principal */}
-              <button
-                onClick={handleBuyNow}
-                className="w-full bg-orange-600 text-white py-4 rounded-lg font-bold text-lg hover:bg-orange-700 transition-colors flex items-center justify-center space-x-2"
-              >
-                <CreditCard className="h-6 w-6" />
-                <span>Comprar Agora</span>
-              </button>
-              
-              {/* Adicionar ao Carrinho e Favoritos */}
-              <div className="flex space-x-3">
+                
                 <button
                   onClick={handleAddToCart}
-                  className="flex-1 bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors flex items-center justify-center space-x-2"
+                  className="w-full border border-green-600 text-green-600 py-3 rounded-lg font-semibold hover:bg-green-50 transition-colors flex items-center justify-center space-x-2"
                 >
                   <ShoppingCart className="h-5 w-5" />
                   <span>Adicionar ao Carrinho</span>
                 </button>
-                <button
-                  onClick={() => toggleFavorite(product)}
-                  className={`p-3 rounded-lg border transition-colors ${
-                    isFavorite
-                      ? "border-red-500 bg-red-500 text-white"
-                      : "border-gray-300 text-gray-600 hover:border-red-500 hover:text-red-500"
-                  }`}
-                >
-                  <Heart className={`h-5 w-5 ${isFavorite ? "fill-current" : ""}`} />
-                </button>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Product Details Tabs */}
-        <div className="mt-12 bg-white rounded-xl shadow-lg p-8">
-          <Tabs defaultValue="description" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="description">Descrição</TabsTrigger>
-              <TabsTrigger value="specifications">Especificações</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="description" className="mt-6">
-              <h3 className="text-xl font-semibold mb-4">Descrição Completa</h3>
-              <p className="text-gray-600 leading-relaxed">{product.fullDescription}</p>
-            </TabsContent>
-            
-            <TabsContent value="specifications" className="mt-6">
-              <h3 className="text-xl font-semibold mb-4">Especificações Técnicas</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {Object.entries(product.specifications).map(([key, value]) => (
-                  <div key={key} className="border-b border-gray-200 pb-2">
-                    <dt className="font-medium text-gray-800 capitalize">{key.replace(/([A-Z])/g, ' $1')}</dt>
-                    <dd className="text-gray-600">{value}</dd>
+          {/* Product Details Tabs */}
+          <div className="border-t">
+            <Tabs defaultValue="description" className="p-8">
+              <TabsList>
+                <TabsTrigger value="description">Descrição</TabsTrigger>
+                <TabsTrigger value="specifications">Especificações</TabsTrigger>
+                <TabsTrigger value="reviews">Avaliações</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="description" className="mt-6">
+                <p className="text-gray-600 leading-relaxed">
+                  {product.fullDescription}
+                </p>
+              </TabsContent>
+              
+              <TabsContent value="specifications" className="mt-6">
+                <div className="space-y-3">
+                  <div className="flex justify-between border-b pb-2">
+                    <span className="font-medium">Material:</span>
+                    <span>{product.specifications.material}</span>
                   </div>
-                ))}
-              </div>
-            </TabsContent>
-          </Tabs>
+                  <div className="flex justify-between border-b pb-2">
+                    <span className="font-medium">Peso:</span>
+                    <span>{product.specifications.peso}</span>
+                  </div>
+                  <div className="flex justify-between border-b pb-2">
+                    <span className="font-medium">Origem:</span>
+                    <span>{product.specifications.origem}</span>
+                  </div>
+                  <div className="flex justify-between border-b pb-2">
+                    <span className="font-medium">Cuidados:</span>
+                    <span>{product.specifications.cuidados}</span>
+                  </div>
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="reviews" className="mt-6">
+                <div className="space-y-4">
+                  <div className="border rounded-lg p-4">
+                    <div className="flex items-center space-x-2 mb-2">
+                      <div className="flex space-x-1">
+                        {[...Array(5)].map((_, i) => (
+                          <Star key={i} className="h-4 w-4 text-yellow-400 fill-current" />
+                        ))}
+                      </div>
+                      <span className="font-medium">João Silva</span>
+                    </div>
+                    <p className="text-gray-600">Produto excelente! Qualidade top e entrega rápida.</p>
+                  </div>
+                  
+                  <div className="border rounded-lg p-4">
+                    <div className="flex items-center space-x-2 mb-2">
+                      <div className="flex space-x-1">
+                        {[...Array(4)].map((_, i) => (
+                          <Star key={i} className="h-4 w-4 text-yellow-400 fill-current" />
+                        ))}
+                        <Star className="h-4 w-4 text-gray-300" />
+                      </div>
+                      <span className="font-medium">Maria Santos</span>
+                    </div>
+                    <p className="text-gray-600">Muito bom, recomendo! Tecido de qualidade.</p>
+                  </div>
+                </div>
+              </TabsContent>
+            </Tabs>
+          </div>
         </div>
       </div>
     </div>

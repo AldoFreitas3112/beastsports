@@ -1,8 +1,9 @@
+
 import { useState } from "react";
 import { User, Mail, Lock, Eye, EyeOff, AlertCircle } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Login = ({ setUser, setCurrentView }) => {
-  const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({
     email: "",
@@ -34,7 +35,7 @@ const Login = ({ setUser, setCurrentView }) => {
     }
   };
 
-  const validateForm = () => {
+  const validateForm = (isLogin) => {
     const newErrors = {
       email: "",
       password: "",
@@ -72,10 +73,10 @@ const Login = ({ setUser, setCurrentView }) => {
     return newErrors;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e, isLogin) => {
     e.preventDefault();
     
-    const formErrors = validateForm();
+    const formErrors = validateForm(isLogin);
     const hasErrors = Object.values(formErrors).some(error => error !== "");
     
     if (hasErrors) {
@@ -85,7 +86,6 @@ const Login = ({ setUser, setCurrentView }) => {
     
     if (isLogin) {
       // Simular validação de login
-      // Aqui você pode adicionar uma lista de emails/senhas válidos para teste
       const validCredentials = [
         { email: "admin@test.com", password: "123456" },
         { email: "user@test.com", password: "password" }
@@ -129,13 +129,10 @@ const Login = ({ setUser, setCurrentView }) => {
                 <User className="h-8 w-8 text-white" />
               </div>
               <h2 className="text-2xl font-bold text-gray-800">
-                {isLogin ? "Entrar na sua conta" : "Criar nova conta"}
+                Acesse sua conta
               </h2>
               <p className="text-gray-600 mt-2">
-                {isLogin 
-                  ? "Bem-vindo de volta! Entre com suas credenciais" 
-                  : "Junte-se à Beast Sports e tenha acesso a ofertas exclusivas"
-                }
+                Entre ou crie uma nova conta na Beast Sports
               </p>
             </div>
 
@@ -147,132 +144,197 @@ const Login = ({ setUser, setCurrentView }) => {
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {!isLogin && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Nome Completo
-                  </label>
-                  <div className="relative">
-                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                    <input
-                      type="text"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                      placeholder="Seu nome completo"
-                      required
-                    />
+            <Tabs defaultValue="login" className="w-full">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="login">Entrar</TabsTrigger>
+                <TabsTrigger value="register">Criar Conta</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="login" className="space-y-6">
+                <form onSubmit={(e) => handleSubmit(e, true)} className="space-y-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Email
+                    </label>
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                      <input
+                        type="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
+                          errors.email ? 'border-red-300' : 'border-gray-300'
+                        }`}
+                        placeholder="seu@email.com"
+                        required
+                      />
+                    </div>
+                    {errors.email && (
+                      <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+                    )}
                   </div>
-                </div>
-              )}
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Email
-                </label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-                      errors.email ? 'border-red-300' : 'border-gray-300'
-                    }`}
-                    placeholder="seu@email.com"
-                    required
-                  />
-                </div>
-                {errors.email && (
-                  <p className="mt-1 text-sm text-red-600">{errors.email}</p>
-                )}
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Senha
-                </label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    name="password"
-                    value={formData.password}
-                    onChange={handleInputChange}
-                    className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-                      errors.password ? 'border-red-300' : 'border-gray-300'
-                    }`}
-                    placeholder="••••••••"
-                    required
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                  >
-                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                  </button>
-                </div>
-                {errors.password && (
-                  <p className="mt-1 text-sm text-red-600">{errors.password}</p>
-                )}
-              </div>
-
-              {!isLogin && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Confirmar Senha
-                  </label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                    <input
-                      type="password"
-                      name="confirmPassword"
-                      value={formData.confirmPassword}
-                      onChange={handleInputChange}
-                      className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-                        errors.confirmPassword ? 'border-red-300' : 'border-gray-300'
-                      }`}
-                      placeholder="••••••••"
-                      required
-                    />
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Senha
+                    </label>
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        name="password"
+                        value={formData.password}
+                        onChange={handleInputChange}
+                        className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
+                          errors.password ? 'border-red-300' : 'border-gray-300'
+                        }`}
+                        placeholder="••••••••"
+                        required
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                      >
+                        {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                      </button>
+                    </div>
+                    {errors.password && (
+                      <p className="mt-1 text-sm text-red-600">{errors.password}</p>
+                    )}
                   </div>
-                  {errors.confirmPassword && (
-                    <p className="mt-1 text-sm text-red-600">{errors.confirmPassword}</p>
-                  )}
-                </div>
-              )}
 
-              {isLogin && (
-                <div className="flex justify-end">
+                  <div className="flex justify-end">
+                    <button
+                      type="button"
+                      className="text-sm text-green-600 hover:text-green-700 font-medium"
+                    >
+                      Esqueceu a senha?
+                    </button>
+                  </div>
+
                   <button
-                    type="button"
-                    className="text-sm text-green-600 hover:text-green-700 font-medium"
+                    type="submit"
+                    className="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors duration-300"
                   >
-                    Esqueceu a senha?
+                    Entrar
                   </button>
+                </form>
+
+                {/* Credenciais de teste para demonstração */}
+                <div className="mt-6 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                  <p className="text-xs text-blue-600 font-medium mb-1">Credenciais de teste:</p>
+                  <p className="text-xs text-blue-600">admin@test.com / 123456</p>
+                  <p className="text-xs text-blue-600">user@test.com / password</p>
                 </div>
-              )}
+              </TabsContent>
 
-              <button
-                type="submit"
-                className="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors duration-300"
-              >
-                {isLogin ? "Entrar" : "Criar Conta"}
-              </button>
-            </form>
+              <TabsContent value="register" className="space-y-6">
+                <form onSubmit={(e) => handleSubmit(e, false)} className="space-y-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Nome Completo
+                    </label>
+                    <div className="relative">
+                      <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                      <input
+                        type="text"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleInputChange}
+                        className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                        placeholder="Seu nome completo"
+                        required
+                      />
+                    </div>
+                  </div>
 
-            {/* Credenciais de teste para demonstração */}
-            {isLogin && (
-              <div className="mt-6 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                <p className="text-xs text-blue-600 font-medium mb-1">Credenciais de teste:</p>
-                <p className="text-xs text-blue-600">admin@test.com / 123456</p>
-                <p className="text-xs text-blue-600">user@test.com / password</p>
-              </div>
-            )}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Email
+                    </label>
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                      <input
+                        type="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
+                          errors.email ? 'border-red-300' : 'border-gray-300'
+                        }`}
+                        placeholder="seu@email.com"
+                        required
+                      />
+                    </div>
+                    {errors.email && (
+                      <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Senha
+                    </label>
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        name="password"
+                        value={formData.password}
+                        onChange={handleInputChange}
+                        className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
+                          errors.password ? 'border-red-300' : 'border-gray-300'
+                        }`}
+                        placeholder="••••••••"
+                        required
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                      >
+                        {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                      </button>
+                    </div>
+                    {errors.password && (
+                      <p className="mt-1 text-sm text-red-600">{errors.password}</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Confirmar Senha
+                    </label>
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                      <input
+                        type="password"
+                        name="confirmPassword"
+                        value={formData.confirmPassword}
+                        onChange={handleInputChange}
+                        className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
+                          errors.confirmPassword ? 'border-red-300' : 'border-gray-300'
+                        }`}
+                        placeholder="••••••••"
+                        required
+                      />
+                    </div>
+                    {errors.confirmPassword && (
+                      <p className="mt-1 text-sm text-red-600">{errors.confirmPassword}</p>
+                    )}
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors duration-300"
+                  >
+                    Criar Conta
+                  </button>
+                </form>
+              </TabsContent>
+            </Tabs>
           </div>
         </div>
       </div>
