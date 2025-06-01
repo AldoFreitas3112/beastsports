@@ -50,7 +50,8 @@ const Hero = ({
             <div className="text-center">
               <div className="text-xl md:text-3xl lg:text-4xl font-bold mb-1 md:mb-2">
             </div>
-              <div className="text-green-200 text-xs md:text-sm">Produtos</div>
+              <div className="text-green-200 text-xs md:text-sm">
+            </div>
             </div>
             <div className="text-center">
               <div className="text-xl md:text-3xl lg:text-4xl font-bold mb-1 md:mb-2">50k+</div>
