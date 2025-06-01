@@ -1,7 +1,7 @@
 
 import { ArrowRight, Zap } from "lucide-react";
 
-const Hero = () => {
+const Hero = ({ setCurrentView }) => {
   return (
     <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-green-600 via-green-700 to-green-800 overflow-hidden">
       {/* Background Pattern */}
@@ -37,11 +37,17 @@ const Hero = () => {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <button className="group bg-white text-green-800 px-8 py-4 rounded-full font-bold text-lg hover:bg-green-50 transition-all duration-300 flex items-center space-x-2 shadow-lg">
+            <button 
+              onClick={() => setCurrentView("products")}
+              className="group bg-white text-green-800 px-8 py-4 rounded-full font-bold text-lg hover:bg-green-50 transition-all duration-300 flex items-center space-x-2 shadow-lg"
+            >
               <span>Explorar Produtos</span>
               <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
             </button>
-            <button className="border-2 border-white text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-white hover:text-green-800 transition-all duration-300">
+            <button 
+              onClick={() => setCurrentView("products")}
+              className="border-2 border-white text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-white hover:text-green-800 transition-all duration-300"
+            >
               Ver Promoções
             </button>
           </div>

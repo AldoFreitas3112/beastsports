@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Minus, Plus, Trash2, CreditCard, ShoppingBag } from "lucide-react";
 
-const Cart = ({ items, updateQuantity, removeFromCart }) => {
+const Cart = ({ items, updateQuantity, removeFromCart, setCurrentView }) => {
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
   const [formData, setFormData] = useState({
@@ -48,7 +48,10 @@ const Cart = ({ items, updateQuantity, removeFromCart }) => {
             <p className="text-gray-600 mb-8">
               Adicione alguns produtos incríveis ao seu carrinho e volte aqui para finalizar sua compra.
             </p>
-            <button className="bg-green-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors">
+            <button 
+              onClick={() => setCurrentView("products")}
+              className="bg-green-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors"
+            >
               Continuar Comprando
             </button>
           </div>

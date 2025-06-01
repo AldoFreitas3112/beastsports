@@ -62,6 +62,7 @@ const Index = () => {
             addToCart={addToCart}
             toggleFavorite={toggleFavorite}
             favorites={favorites}
+            setCurrentView={setCurrentView}
           />
         );
       case "cart":
@@ -70,6 +71,7 @@ const Index = () => {
             items={cartItems}
             updateQuantity={updateQuantity}
             removeFromCart={removeFromCart}
+            setCurrentView={setCurrentView}
           />
         );
       case "login":
@@ -102,6 +104,14 @@ const Index = () => {
                   cuidadosamente selecionado para atender às necessidades dos verdadeiros apaixonados por esporte.
                 </p>
               </div>
+              <div className="text-center mt-8">
+                <button
+                  onClick={() => setCurrentView("home")}
+                  className="bg-green-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors"
+                >
+                  Voltar ao Início
+                </button>
+              </div>
             </div>
           </div>
         );
@@ -132,6 +142,14 @@ const Index = () => {
                     </div>
                   </div>
                 </div>
+                <div className="text-center mt-8">
+                  <button
+                    onClick={() => setCurrentView("home")}
+                    className="bg-green-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors"
+                  >
+                    Voltar ao Início
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -139,12 +157,13 @@ const Index = () => {
       default:
         return (
           <>
-            <Hero />
+            <Hero setCurrentView={setCurrentView} />
             <ProductGrid 
               addToCart={addToCart}
               toggleFavorite={toggleFavorite}
               favorites={favorites}
               featured={true}
+              setCurrentView={setCurrentView}
             />
           </>
         );

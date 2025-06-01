@@ -1,8 +1,7 @@
-
 import { useState } from "react";
 import { Heart, ShoppingCart, Star, Filter } from "lucide-react";
 
-const ProductGrid = ({ addToCart, toggleFavorite, favorites, featured = false }) => {
+const ProductGrid = ({ addToCart, toggleFavorite, favorites, featured = false, setCurrentView }) => {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [priceRange, setPriceRange] = useState("all");
   const [sortBy, setSortBy] = useState("name");
@@ -259,7 +258,10 @@ const ProductGrid = ({ addToCart, toggleFavorite, favorites, featured = false })
 
         {featured && (
           <div className="text-center mt-12">
-            <button className="bg-green-600 text-white px-8 py-4 rounded-full font-semibold hover:bg-green-700 transition-colors duration-300 text-lg">
+            <button 
+              onClick={() => setCurrentView("products")}
+              className="bg-green-600 text-white px-8 py-4 rounded-full font-semibold hover:bg-green-700 transition-colors duration-300 text-lg"
+            >
               Ver Todos os Produtos
             </button>
           </div>
