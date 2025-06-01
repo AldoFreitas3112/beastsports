@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { User, Mail, Lock, Eye, EyeOff, AlertCircle } from "lucide-react";
 
@@ -279,15 +278,6 @@ const Login = ({ setUser, setCurrentView }) => {
                 className="ml-2 text-green-600 hover:text-green-700 font-semibold"
               >
                 {isLogin ? "Cadastre-se" : "Entrar"}
-              </button>
-            </div>
-
-            <div className="mt-6 text-center">
-              <button
-                onClick={() => setCurrentView("home")}
-                className="text-gray-500 hover:text-gray-700 text-sm"
-              >
-                Continuar sem login
               </button>
             </div>
 
