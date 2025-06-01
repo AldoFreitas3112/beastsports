@@ -1,3 +1,4 @@
+
 import { Search, ShoppingCart, User, Menu, X } from "lucide-react";
 import { useState } from "react";
 import MobileHeader from "./MobileHeader";
