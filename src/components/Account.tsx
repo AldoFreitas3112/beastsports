@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { User, Camera, Heart, Package, Settings, LogOut } from "lucide-react";
 
@@ -30,6 +29,20 @@ const Account = ({ user, setUser, favorites, setCurrentView }) => {
     });
   };
 
+  const handlePhotoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setUser({
+          ...user,
+          profileImage: event.target.result
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const orders = [
     {
       id: "BS001",
@@ -59,10 +72,28 @@ const Account = ({ user, setUser, favorites, setCurrentView }) => {
               <div className="bg-white rounded-lg shadow-md p-6">
                 <div className="text-center mb-6">
                   <div className="relative inline-block">
-                    <div className="w-20 h-20 bg-gradient-to-r from-green-600 to-green-700 rounded-full flex items-center justify-center mx-auto mb-3">
-                      <User className="h-10 w-10 text-white" />
+                    <div className="w-20 h-20 bg-gradient-to-r from-green-600 to-green-700 rounded-full flex items-center justify-center mx-auto mb-3 overflow-hidden">
+                      {user?.profileImage ? (
+                        <img 
+                          src={user.profileImage} 
+                          alt="Profile" 
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <User className="h-10 w-10 text-white" />
+                      )}
                     </div>
-                    <button className="absolute bottom-0 right-0 bg-white rounded-full p-1 shadow-md border-2 border-gray-200">
+                    <input
+                      type="file"
+                      id="profile-photo"
+                      accept="image/*"
+                      onChange={handlePhotoChange}
+                      className="hidden"
+                    />
+                    <button 
+                      onClick={() => document.getElementById('profile-photo').click()}
+                      className="absolute bottom-0 right-0 bg-white rounded-full p-1 shadow-md border-2 border-gray-200 hover:bg-gray-50 transition-colors"
+                    >
                       <Camera className="h-4 w-4 text-gray-600" />
                     </button>
                   </div>
