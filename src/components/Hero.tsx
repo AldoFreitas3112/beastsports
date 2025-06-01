@@ -2,8 +2,19 @@ import { ArrowRight, Zap } from "lucide-react";
 const Hero = ({
   setCurrentView
 }) => {
-  return <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-green-600 via-green-700 to-green-800 overflow-hidden pt-20 md:pt-0">
-      {/* Background Pattern */}
+  return <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 md:pt-0">
+      {/* Background Image */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage: "url('/lovable-uploads/847a7119-c808-4db7-9e51-4e9c5241a9e3.png')",
+        }}
+      />
+      
+      {/* Dark overlay for better text readability */}
+      <div className="absolute inset-0 bg-black/60" />
+
+      {/* Background Pattern - keeping existing decorative elements */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute top-10 left-10 w-20 h-20 border-2 border-white rounded-full"></div>
         <div className="absolute top-40 right-20 w-16 h-16 border-2 border-white rounded-full"></div>
