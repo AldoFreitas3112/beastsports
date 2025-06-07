@@ -27,7 +27,7 @@ export const useProductReviews = (productId: number) => {
         .from('product_reviews')
         .select(`
           *,
-          profiles!product_reviews_user_id_fkey (
+          profiles:user_id (
             full_name
           )
         `)
