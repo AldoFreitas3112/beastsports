@@ -1,6 +1,4 @@
 
-
-
 export const products = [
   {
     id: 1,
@@ -19,7 +17,30 @@ export const products = [
       cuidados: "Lavar à máquina em água fria, não usar alvejante"
     },
     sizes: ["P", "M", "G", "GG", "XG"],
-    colors: ["Preto"]
+    colors: ["Preto"],
+    staticReviews: [
+      {
+        id: 1,
+        userName: "Carlos Silva",
+        rating: 5,
+        comment: "Excelente qualidade! O tecido é muito confortável e a respirabilidade é incrível. Uso para treinar todos os dias.",
+        date: "2024-05-15"
+      },
+      {
+        id: 2,
+        userName: "Maria Fernanda",
+        rating: 5,
+        comment: "Camisa top! O design é lindo e o caimento perfeito. Recomendo demais!",
+        date: "2024-05-10"
+      },
+      {
+        id: 3,
+        userName: "João Pedro",
+        rating: 4,
+        comment: "Muito boa! Única coisa é que eu esperava que fosse um pouco mais ajustada, mas de resto está perfeita.",
+        date: "2024-05-08"
+      }
+    ]
   },
   {
     id: 2,
@@ -38,7 +59,30 @@ export const products = [
       cuidados: "Lavar à máquina em água fria, não usar alvejante"
     },
     sizes: ["P", "M", "G", "GG", "XG"],
-    colors: ["Branco"]
+    colors: ["Branco"],
+    staticReviews: [
+      {
+        id: 1,
+        userName: "Roberto Santos",
+        rating: 5,
+        comment: "Produto sensacional! A qualidade é top e o branco não amarela. Muito satisfeito com a compra.",
+        date: "2024-05-18"
+      },
+      {
+        id: 2,
+        userName: "Juliana Costa",
+        rating: 5,
+        comment: "Linda demais! Uso tanto para treinar quanto para sair. O tecido é muito gostoso.",
+        date: "2024-05-12"
+      },
+      {
+        id: 3,
+        userName: "Felipe Oliveira",
+        rating: 5,
+        comment: "Melhor camisa esportiva que já comprei. Secagem rápida e muito confortável.",
+        date: "2024-05-09"
+      }
+    ]
   },
   {
     id: 3,
@@ -57,7 +101,30 @@ export const products = [
       cuidados: "Lavar à máquina em água morna, pode usar secadora"
     },
     sizes: ["P", "M", "G", "GG", "XG"],
-    colors: ["Preto"]
+    colors: ["Preto"],
+    staticReviews: [
+      {
+        id: 1,
+        userName: "Lucas Martins",
+        rating: 5,
+        comment: "Camiseta incrível! O algodão é de primeira qualidade e o corte é perfeito. Super recomendo!",
+        date: "2024-05-14"
+      },
+      {
+        id: 2,
+        userName: "Fernanda Lima",
+        rating: 4,
+        comment: "Gostei muito! Tecido macio e confortável. Única coisa é que encolheu um pouquinho na lavagem.",
+        date: "2024-05-11"
+      },
+      {
+        id: 3,
+        userName: "Gabriel Souza",
+        rating: 5,
+        comment: "Excelente custo-benefício! Uso no dia a dia e fica linda com qualquer look.",
+        date: "2024-05-07"
+      }
+    ]
   },
   {
     id: 4,
@@ -76,8 +143,29 @@ export const products = [
       cuidados: "Lavar à máquina em água morna, pode usar secadora"
     },
     sizes: ["P", "M", "G", "GG", "XG"],
-    colors: ["Branco"]
+    colors: ["Branco"],
+    staticReviews: [
+      {
+        id: 1,
+        userName: "Patrícia Alves",
+        rating: 4,
+        comment: "Muito boa! O logo é bem feito e não descola. Voltarei a comprar com certeza.",
+        date: "2024-05-03"
+      },
+      {
+        id: 2,
+        userName: "Ricardo Mendes",
+        rating: 5,
+        comment: "Perfeita! Tecido de qualidade e cor que não desbota. Recomendo!",
+        date: "2024-04-28"
+      },
+      {
+        id: 3,
+        userName: "Amanda Silva",
+        rating: 4,
+        comment: "Ótima camiseta para o dia a dia. Confortável e bonita.",
+        date: "2024-04-25"
+      }
+    ]
   }
 ];
-
-

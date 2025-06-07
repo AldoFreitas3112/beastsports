@@ -2,6 +2,10 @@ import { useState } from "react";
 import { ArrowLeft, Heart, ShoppingCart, Star, Plus, Minus, CreditCard, User } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { products } from "@/data/products";
+import { useProductReviews } from "@/hooks/useProductReviews";
+import { useAuth } from "@/hooks/useAuth";
+import ReviewForm from "@/components/ReviewForm";
+import ReviewsList from "@/components/ReviewsList";
 
 const ProductDetails = ({ productId, setCurrentView, addToCart, toggleFavorite, favorites }) => {
   const [selectedSize, setSelectedSize] = useState("M");
@@ -9,6 +13,8 @@ const ProductDetails = ({ productId, setCurrentView, addToCart, toggleFavorite, 
   const [quantity, setQuantity] = useState(1);
 
   const product = products.find(p => p.id === parseInt(productId));
+  const { reviews, loading, submitting, submitReview } = useProductReviews(parseInt(productId));
+  const { isAuthenticated } = useAuth();
 
   if (!product) {
     return (
@@ -70,6 +76,7 @@ const ProductDetails = ({ productId, setCurrentView, addToCart, toggleFavorite, 
           </div>
         </div>
       </header>
+
       <div className="container mx-auto px-4 py-4">
         <button
           onClick={() => setCurrentView("products")}
@@ -81,7 +88,6 @@ const ProductDetails = ({ productId, setCurrentView, addToCart, toggleFavorite, 
 
         <div className="bg-white rounded-xl shadow-lg overflow-hidden">
           <div className="grid md:grid-cols-2 gap-8 p-8">
-            {/* Product Image */}
             <div className="relative">
               <img
                 src={product.image}
@@ -101,7 +107,6 @@ const ProductDetails = ({ productId, setCurrentView, addToCart, toggleFavorite, 
               </button>
             </div>
 
-            {/* Product Info */}
             <div className="space-y-6">
               <div>
                 <h1 className="text-3xl font-bold text-gray-800 mb-2">{product.name}</h1>
@@ -122,14 +127,12 @@ const ProductDetails = ({ productId, setCurrentView, addToCart, toggleFavorite, 
                 </div>
               </div>
 
-              {/* Price */}
               <div className="flex items-center space-x-4 mb-6">
                 <span className="text-3xl font-bold text-green-600">
                   R$ {product.price.toFixed(2)}
                 </span>
               </div>
 
-              {/* Size Selection */}
               <div>
                 <h3 className="text-lg font-semibold mb-3">Tamanho</h3>
                 <div className="flex space-x-3">
@@ -149,7 +152,6 @@ const ProductDetails = ({ productId, setCurrentView, addToCart, toggleFavorite, 
                 </div>
               </div>
 
-              {/* Color Selection */}
               <div>
                 <h3 className="text-lg font-semibold mb-3">Cor</h3>
                 <div className="flex space-x-3">
@@ -169,7 +171,6 @@ const ProductDetails = ({ productId, setCurrentView, addToCart, toggleFavorite, 
                 </div>
               </div>
 
-              {/* Quantity */}
               <div>
                 <h3 className="text-lg font-semibold mb-3">Quantidade</h3>
                 <div className="flex items-center space-x-3">
@@ -189,7 +190,6 @@ const ProductDetails = ({ productId, setCurrentView, addToCart, toggleFavorite, 
                 </div>
               </div>
 
-              {/* Action Buttons */}
               <div className="space-y-3">
                 <button
                   onClick={handleBuyNow}
@@ -210,7 +210,6 @@ const ProductDetails = ({ productId, setCurrentView, addToCart, toggleFavorite, 
             </div>
           </div>
 
-          {/* Product Details Tabs */}
           <div className="border-t">
             <Tabs defaultValue="description" className="p-8">
               <TabsList>
@@ -247,31 +246,31 @@ const ProductDetails = ({ productId, setCurrentView, addToCart, toggleFavorite, 
               </TabsContent>
               
               <TabsContent value="reviews" className="mt-6">
-                <div className="space-y-4">
-                  <div className="border rounded-lg p-4">
-                    <div className="flex items-center space-x-2 mb-2">
-                      <div className="flex space-x-1">
-                        {[...Array(5)].map((_, i) => (
-                          <Star key={i} className="h-4 w-4 text-yellow-400 fill-current" />
-                        ))}
-                      </div>
-                      <span className="font-medium">João Silva</span>
-                    </div>
-                    <p className="text-gray-600">Produto excelente! Qualidade top e entrega rápida.</p>
-                  </div>
+                <div className="space-y-6">
+                  <ReviewsList 
+                    reviews={reviews}
+                    staticReviews={product.staticReviews || []}
+                    loading={loading}
+                  />
                   
-                  <div className="border rounded-lg p-4">
-                    <div className="flex items-center space-x-2 mb-2">
-                      <div className="flex space-x-1">
-                        {[...Array(4)].map((_, i) => (
-                          <Star key={i} className="h-4 w-4 text-yellow-400 fill-current" />
-                        ))}
-                        <Star className="h-4 w-4 text-gray-300" />
-                      </div>
-                      <span className="font-medium">Maria Santos</span>
+                  {isAuthenticated ? (
+                    <ReviewForm 
+                      onSubmit={submitReview}
+                      submitting={submitting}
+                    />
+                  ) : (
+                    <div className="bg-gray-50 rounded-lg p-6 text-center">
+                      <p className="text-gray-600 mb-4">
+                        Faça login para avaliar este produto
+                      </p>
+                      <button
+                        onClick={() => setCurrentView("login")}
+                        className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors"
+                      >
+                        Fazer Login
+                      </button>
                     </div>
-                    <p className="text-gray-600">Muito bom, recomendo! Tecido de qualidade.</p>
-                  </div>
+                  )}
                 </div>
               </TabsContent>
             </Tabs>
