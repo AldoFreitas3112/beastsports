@@ -1,12 +1,14 @@
 
 import { useState } from "react";
-import { ArrowLeft, Heart, ShoppingCart, Star, Plus, Minus, CreditCard, User } from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ArrowLeft } from "lucide-react";
 import { products } from "@/data/products";
 import { useProductReviews } from "@/hooks/useProductReviews";
-import { useAuth } from "@/hooks/useAuth";
-import ReviewForm from "@/components/ReviewForm";
-import ReviewsList from "@/components/ReviewsList";
+import ProductHeader from "@/components/ProductHeader";
+import ProductImageSection from "@/components/ProductImageSection";
+import ProductInfo from "@/components/ProductInfo";
+import ProductOptions from "@/components/ProductOptions";
+import ProductActions from "@/components/ProductActions";
+import ProductTabs from "@/components/ProductTabs";
 
 const ProductDetails = ({ productId, setCurrentView, addToCart, toggleFavorite, favorites }) => {
   const [selectedSize, setSelectedSize] = useState("M");
@@ -15,7 +17,6 @@ const ProductDetails = ({ productId, setCurrentView, addToCart, toggleFavorite, 
 
   const product = products.find(p => p.id === parseInt(productId));
   const { reviews, loading, submitting, submitReview } = useProductReviews(parseInt(productId));
-  const { isAuthenticated } = useAuth();
 
   if (!product) {
     return (
@@ -53,30 +54,7 @@ const ProductDetails = ({ productId, setCurrentView, addToCart, toggleFavorite, 
 
   return (
     <div className="min-h-screen pt-20 bg-gray-50">
-      <header className="fixed top-0 left-0 right-0 bg-white shadow-md z-50">
-        <div className="container mx-auto px-4 py-2 flex items-center justify-between">
-          <button
-            onClick={() => setCurrentView("home")}
-            className="text-gray-600 hover:text-green-600"
-          >
-            Início
-          </button>
-          <div className="flex items-center space-x-4">
-            <button
-              onClick={() => setCurrentView("cart")}
-              className="relative p-2 text-gray-700 hover:text-green-600 transition-colors"
-            >
-              <ShoppingCart className="h-6 w-6" />
-            </button>
-            <button
-              onClick={() => setCurrentView("login")}
-              className="p-2 text-gray-700 hover:text-green-600 transition-colors"
-            >
-              <User className="h-6 w-6" />
-            </button>
-          </div>
-        </div>
-      </header>
+      <ProductHeader setCurrentView={setCurrentView} />
 
       <div className="container mx-auto px-4 py-4">
         <button
@@ -89,193 +67,41 @@ const ProductDetails = ({ productId, setCurrentView, addToCart, toggleFavorite, 
 
         <div className="bg-white rounded-xl shadow-lg overflow-hidden">
           <div className="grid md:grid-cols-2 gap-8 p-8">
-            <div className="relative">
-              <img
-                src={product.image}
-                alt={product.name}
-                className="w-full h-96 object-cover rounded-lg"
-              />
-              
-              <button
-                onClick={() => toggleFavorite(product)}
-                className={`absolute top-4 right-4 p-3 rounded-full ${
-                  isFavorite 
-                    ? "bg-red-500 text-white" 
-                    : "bg-white text-gray-600"
-                } shadow-lg hover:scale-110 transition-transform`}
-              >
-                <Heart className={`h-6 w-6 ${isFavorite ? "fill-current" : ""}`} />
-              </button>
-            </div>
+            <ProductImageSection
+              product={product}
+              isFavorite={isFavorite}
+              toggleFavorite={toggleFavorite}
+            />
 
             <div className="space-y-6">
-              <div>
-                <h1 className="text-3xl font-bold text-gray-800 mb-2">{product.name}</h1>
-                <p className="text-gray-600 mb-4">{product.description}</p>
-                
-                <div className="flex items-center space-x-1 mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <Star
-                      key={i}
-                      className={`h-5 w-5 ${
-                        i < Math.floor(product.rating)
-                          ? "text-yellow-400 fill-current"
-                          : "text-gray-300"
-                      }`}
-                    />
-                  ))}
-                  <span className="text-gray-600 ml-2">({product.rating})</span>
-                </div>
-              </div>
+              <ProductInfo product={product} />
+              
+              <ProductOptions
+                product={product}
+                selectedSize={selectedSize}
+                selectedColor={selectedColor}
+                quantity={quantity}
+                setSelectedSize={setSelectedSize}
+                setSelectedColor={setSelectedColor}
+                decreaseQuantity={decreaseQuantity}
+                increaseQuantity={increaseQuantity}
+              />
 
-              <div className="flex items-center space-x-4 mb-6">
-                <span className="text-3xl font-bold text-green-600">
-                  R$ {product.price.toFixed(2)}
-                </span>
-              </div>
-
-              <div>
-                <h3 className="text-lg font-semibold mb-3">Tamanho</h3>
-                <div className="flex space-x-3">
-                  {product.sizes.map((size) => (
-                    <button
-                      key={size}
-                      onClick={() => setSelectedSize(size)}
-                      className={`px-4 py-2 border rounded-lg font-medium ${
-                        selectedSize === size
-                          ? "border-green-600 bg-green-50 text-green-600"
-                          : "border-gray-300 hover:border-gray-400"
-                      }`}
-                    >
-                      {size}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <h3 className="text-lg font-semibold mb-3">Cor</h3>
-                <div className="flex space-x-3">
-                  {product.colors.map((color) => (
-                    <button
-                      key={color}
-                      onClick={() => setSelectedColor(color)}
-                      className={`px-4 py-2 border rounded-lg font-medium ${
-                        selectedColor === color
-                          ? "border-green-600 bg-green-50 text-green-600"
-                          : "border-gray-300 hover:border-gray-400"
-                      }`}
-                    >
-                      {color}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <h3 className="text-lg font-semibold mb-3">Quantidade</h3>
-                <div className="flex items-center space-x-3">
-                  <button
-                    onClick={decreaseQuantity}
-                    className="p-2 border border-gray-300 rounded-lg hover:bg-gray-100"
-                  >
-                    <Minus className="h-4 w-4" />
-                  </button>
-                  <span className="text-xl font-semibold px-4">{quantity}</span>
-                  <button
-                    onClick={increaseQuantity}
-                    className="p-2 border border-gray-300 rounded-lg hover:bg-gray-100"
-                  >
-                    <Plus className="h-4 w-4" />
-                  </button>
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                <button
-                  onClick={handleBuyNow}
-                  className="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors flex items-center justify-center space-x-2"
-                >
-                  <CreditCard className="h-5 w-5" />
-                  <span>Comprar Agora</span>
-                </button>
-                
-                <button
-                  onClick={handleAddToCart}
-                  className="w-full border border-green-600 text-green-600 py-3 rounded-lg font-semibold hover:bg-green-50 transition-colors flex items-center justify-center space-x-2"
-                >
-                  <ShoppingCart className="h-5 w-5" />
-                  <span>Adicionar ao Carrinho</span>
-                </button>
-              </div>
+              <ProductActions
+                handleBuyNow={handleBuyNow}
+                handleAddToCart={handleAddToCart}
+              />
             </div>
           </div>
 
-          <div className="border-t">
-            <Tabs defaultValue="description" className="p-8">
-              <TabsList>
-                <TabsTrigger value="description">Descrição</TabsTrigger>
-                <TabsTrigger value="specifications">Especificações</TabsTrigger>
-                <TabsTrigger value="reviews">Avaliações</TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="description" className="mt-6">
-                <p className="text-gray-600 leading-relaxed">
-                  {product.fullDescription}
-                </p>
-              </TabsContent>
-              
-              <TabsContent value="specifications" className="mt-6">
-                <div className="space-y-3">
-                  <div className="flex justify-between border-b pb-2">
-                    <span className="font-medium">Material:</span>
-                    <span>{product.specifications.material}</span>
-                  </div>
-                  <div className="flex justify-between border-b pb-2">
-                    <span className="font-medium">Peso:</span>
-                    <span>{product.specifications.peso}</span>
-                  </div>
-                  <div className="flex justify-between border-b pb-2">
-                    <span className="font-medium">Origem:</span>
-                    <span>{product.specifications.origem}</span>
-                  </div>
-                  <div className="flex justify-between border-b pb-2">
-                    <span className="font-medium">Cuidados:</span>
-                    <span>{product.specifications.cuidados}</span>
-                  </div>
-                </div>
-              </TabsContent>
-              
-              <TabsContent value="reviews" className="mt-6">
-                <div className="space-y-6">
-                  <ReviewsList 
-                    reviews={reviews}
-                    staticReviews={product.staticReviews || []}
-                    loading={loading}
-                  />
-                  
-                  {isAuthenticated ? (
-                    <ReviewForm 
-                      onSubmit={submitReview}
-                      submitting={submitting}
-                    />
-                  ) : (
-                    <div className="bg-gray-50 rounded-lg p-6 text-center">
-                      <p className="text-gray-600 mb-4">
-                        Faça login para avaliar este produto
-                      </p>
-                      <button
-                        onClick={() => setCurrentView("login")}
-                        className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors"
-                      >
-                        Fazer Login
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </TabsContent>
-            </Tabs>
-          </div>
+          <ProductTabs
+            product={product}
+            reviews={reviews}
+            loading={loading}
+            submitting={submitting}
+            submitReview={submitReview}
+            setCurrentView={setCurrentView}
+          />
         </div>
       </div>
     </div>
