@@ -23,21 +23,42 @@ export const useProductReviews = (productId: number) => {
 
   const fetchReviews = async () => {
     try {
-      const { data, error } = await supabase
+      // Fetch reviews first
+      const { data: reviewsData, error: reviewsError } = await supabase
         .from('product_reviews')
-        .select(`
-          *,
-          profiles:user_id (
-            full_name
-          )
-        `)
+        .select('*')
         .eq('product_id', productId)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
-      setReviews(data || []);
+      if (reviewsError) throw reviewsError;
+
+      if (reviewsData && reviewsData.length > 0) {
+        // Get unique user IDs
+        const userIds = [...new Set(reviewsData.map(review => review.user_id))];
+        
+        // Fetch profiles for these users
+        const { data: profilesData, error: profilesError } = await supabase
+          .from('profiles')
+          .select('id, full_name')
+          .in('id', userIds);
+
+        if (profilesError) throw profilesError;
+
+        // Combine reviews with profile data
+        const reviewsWithProfiles = reviewsData.map(review => ({
+          ...review,
+          profiles: profilesData?.find(profile => profile.id === review.user_id) 
+            ? { full_name: profilesData.find(profile => profile.id === review.user_id)?.full_name || 'Usuário' }
+            : undefined
+        }));
+
+        setReviews(reviewsWithProfiles);
+      } else {
+        setReviews([]);
+      }
     } catch (error) {
       console.error('Erro ao buscar avaliações:', error);
+      setReviews([]);
     } finally {
       setLoading(false);
     }
