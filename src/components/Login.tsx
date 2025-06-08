@@ -1,16 +1,27 @@
 
 import { useState } from "react";
-import { User, Mail, Lock, Eye, EyeOff, AlertCircle } from "lucide-react";
+import { User, Mail, Lock, Eye, EyeOff, AlertCircle, CheckCircle } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const Login = ({ setUser, setCurrentView }) => {
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+  const [resetEmailSent, setResetEmailSent] = useState(false);
+  const { toast } = useToast();
+  
   const [errors, setErrors] = useState({
     email: "",
     password: "",
     confirmPassword: "",
     general: ""
   });
+  
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -73,51 +84,178 @@ const Login = ({ setUser, setCurrentView }) => {
     return newErrors;
   };
 
-  const handleSubmit = (e, isLogin) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
+    setLoading(true);
     
-    const formErrors = validateForm(isLogin);
+    const formErrors = validateForm(true);
     const hasErrors = Object.values(formErrors).some(error => error !== "");
     
     if (hasErrors) {
       setErrors(formErrors);
+      setLoading(false);
       return;
     }
-    
-    if (isLogin) {
-      // Simular validação de login
-      const validCredentials = [
-        { email: "admin@test.com", password: "123456" },
-        { email: "user@test.com", password: "password" }
-      ];
-      
-      const isValidUser = validCredentials.some(
-        cred => cred.email === formData.email && cred.password === formData.password
-      );
-      
-      if (isValidUser) {
-        setUser({
-          name: formData.email.split("@")[0],
-          email: formData.email,
-          avatar: null
-        });
-        setCurrentView("home");
-      } else {
+
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: formData.email,
+        password: formData.password,
+      });
+
+      if (error) {
         setErrors({
           ...errors,
           general: "Email ou senha incorretos"
         });
+        toast({
+          title: "Erro no login",
+          description: "Verifique suas credenciais e tente novamente.",
+          variant: "destructive"
+        });
+      } else {
+        // Salvar no localStorage se "lembrar-me" estiver marcado
+        if (rememberMe) {
+          localStorage.setItem('rememberLogin', 'true');
+          localStorage.setItem('userEmail', formData.email);
+        } else {
+          localStorage.removeItem('rememberLogin');
+          localStorage.removeItem('userEmail');
+        }
+
+        setUser({
+          name: data.user.user_metadata?.full_name || data.user.email.split("@")[0],
+          email: data.user.email,
+          avatar: data.user.user_metadata?.avatar_url || null
+        });
+        setCurrentView("home");
+        
+        toast({
+          title: "Login realizado com sucesso!",
+          description: "Bem-vindo de volta!",
+        });
       }
-    } else {
-      // Cadastro - simular sucesso
-      setUser({
-        name: formData.name,
-        email: formData.email,
-        avatar: null
+    } catch (error) {
+      console.error('Login error:', error);
+      setErrors({
+        ...errors,
+        general: "Erro interno. Tente novamente mais tarde."
       });
-      setCurrentView("home");
     }
+    
+    setLoading(false);
   };
+
+  const handleSignUp = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    
+    const formErrors = validateForm(false);
+    const hasErrors = Object.values(formErrors).some(error => error !== "");
+    
+    if (hasErrors) {
+      setErrors(formErrors);
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email: formData.email,
+        password: formData.password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/`,
+          data: {
+            full_name: formData.name,
+          }
+        }
+      });
+
+      if (error) {
+        if (error.message.includes('already registered')) {
+          setErrors({
+            ...errors,
+            general: "Este email já está cadastrado. Faça login ou use a opção 'Esqueci minha senha'."
+          });
+        } else {
+          setErrors({
+            ...errors,
+            general: error.message
+          });
+        }
+        toast({
+          title: "Erro no cadastro",
+          description: error.message,
+          variant: "destructive"
+        });
+      } else {
+        toast({
+          title: "Cadastro realizado!",
+          description: "Verifique seu email para confirmar a conta.",
+        });
+      }
+    } catch (error) {
+      console.error('SignUp error:', error);
+      setErrors({
+        ...errors,
+        general: "Erro interno. Tente novamente mais tarde."
+      });
+    }
+    
+    setLoading(false);
+  };
+
+  const handleForgotPassword = async () => {
+    if (!formData.email) {
+      setErrors({
+        ...errors,
+        email: "Digite seu email para recuperar a senha"
+      });
+      return;
+    }
+
+    setLoading(true);
+    
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(formData.email, {
+        redirectTo: `${window.location.origin}/`,
+      });
+
+      if (error) {
+        toast({
+          title: "Erro ao enviar email",
+          description: error.message,
+          variant: "destructive"
+        });
+      } else {
+        setResetEmailSent(true);
+        toast({
+          title: "Email enviado!",
+          description: "Verifique sua caixa de entrada para redefinir sua senha.",
+        });
+      }
+    } catch (error) {
+      console.error('Password reset error:', error);
+      toast({
+        title: "Erro",
+        description: "Erro interno. Tente novamente mais tarde.",
+        variant: "destructive"
+      });
+    }
+    
+    setLoading(false);
+  };
+
+  // Carregar email salvo se "lembrar-me" estava ativo
+  useState(() => {
+    const remembered = localStorage.getItem('rememberLogin');
+    const savedEmail = localStorage.getItem('userEmail');
+    
+    if (remembered === 'true' && savedEmail) {
+      setFormData(prev => ({ ...prev, email: savedEmail }));
+      setRememberMe(true);
+    }
+  }, []);
 
   return (
     <div className="min-h-screen pt-20 bg-gradient-to-br from-green-50 to-green-100">
@@ -144,6 +282,16 @@ const Login = ({ setUser, setCurrentView }) => {
               </div>
             )}
 
+            {/* Confirmação de email enviado */}
+            {resetEmailSent && (
+              <div className="mb-6 p-3 bg-green-50 border border-green-200 rounded-lg flex items-center gap-2">
+                <CheckCircle className="h-4 w-4 text-green-500" />
+                <span className="text-sm text-green-600">
+                  Email de recuperação enviado! Verifique sua caixa de entrada.
+                </span>
+              </div>
+            )}
+
             <Tabs defaultValue="login" className="w-full">
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="login">Entrar</TabsTrigger>
@@ -151,21 +299,19 @@ const Login = ({ setUser, setCurrentView }) => {
               </TabsList>
 
               <TabsContent value="login" className="space-y-6">
-                <form onSubmit={(e) => handleSubmit(e, true)} className="space-y-6">
+                <form onSubmit={handleLogin} className="space-y-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Email
                     </label>
                     <div className="relative">
                       <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                      <input
+                      <Input
                         type="email"
                         name="email"
                         value={formData.email}
                         onChange={handleInputChange}
-                        className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-                          errors.email ? 'border-red-300' : 'border-gray-300'
-                        }`}
+                        className={`pl-10 ${errors.email ? 'border-red-300' : ''}`}
                         placeholder="seu@email.com"
                         required
                       />
@@ -181,14 +327,12 @@ const Login = ({ setUser, setCurrentView }) => {
                     </label>
                     <div className="relative">
                       <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                      <input
+                      <Input
                         type={showPassword ? "text" : "password"}
                         name="password"
                         value={formData.password}
                         onChange={handleInputChange}
-                        className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-                          errors.password ? 'border-red-300' : 'border-gray-300'
-                        }`}
+                        className={`pl-10 pr-12 ${errors.password ? 'border-red-300' : ''}`}
                         placeholder="••••••••"
                         required
                       />
@@ -205,45 +349,55 @@ const Login = ({ setUser, setCurrentView }) => {
                     )}
                   </div>
 
-                  <div className="flex justify-end">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id="remember"
+                        checked={rememberMe}
+                        onCheckedChange={setRememberMe}
+                      />
+                      <label
+                        htmlFor="remember"
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                      >
+                        Lembrar-me
+                      </label>
+                    </div>
+                    
                     <button
                       type="button"
-                      className="text-sm text-green-600 hover:text-green-700 font-medium"
+                      onClick={handleForgotPassword}
+                      disabled={loading}
+                      className="text-sm text-green-600 hover:text-green-700 font-medium disabled:opacity-50"
                     >
-                      Esqueceu a senha?
+                      Esqueci minha senha
                     </button>
                   </div>
 
-                  <button
+                  <Button
                     type="submit"
-                    className="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors duration-300"
+                    className="w-full bg-green-600 text-white hover:bg-green-700"
+                    disabled={loading}
                   >
-                    Entrar
-                  </button>
+                    {loading ? "Entrando..." : "Entrar"}
+                  </Button>
                 </form>
-
-                {/* Credenciais de teste para demonstração */}
-                <div className="mt-6 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                  <p className="text-xs text-blue-600 font-medium mb-1">Credenciais de teste:</p>
-                  <p className="text-xs text-blue-600">admin@test.com / 123456</p>
-                  <p className="text-xs text-blue-600">user@test.com / password</p>
-                </div>
               </TabsContent>
 
               <TabsContent value="register" className="space-y-6">
-                <form onSubmit={(e) => handleSubmit(e, false)} className="space-y-6">
+                <form onSubmit={handleSignUp} className="space-y-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Nome Completo
                     </label>
                     <div className="relative">
                       <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                      <input
+                      <Input
                         type="text"
                         name="name"
                         value={formData.name}
                         onChange={handleInputChange}
-                        className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                        className="pl-10"
                         placeholder="Seu nome completo"
                         required
                       />
@@ -256,14 +410,12 @@ const Login = ({ setUser, setCurrentView }) => {
                     </label>
                     <div className="relative">
                       <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                      <input
+                      <Input
                         type="email"
                         name="email"
                         value={formData.email}
                         onChange={handleInputChange}
-                        className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-                          errors.email ? 'border-red-300' : 'border-gray-300'
-                        }`}
+                        className={`pl-10 ${errors.email ? 'border-red-300' : ''}`}
                         placeholder="seu@email.com"
                         required
                       />
@@ -279,14 +431,12 @@ const Login = ({ setUser, setCurrentView }) => {
                     </label>
                     <div className="relative">
                       <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                      <input
+                      <Input
                         type={showPassword ? "text" : "password"}
                         name="password"
                         value={formData.password}
                         onChange={handleInputChange}
-                        className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-                          errors.password ? 'border-red-300' : 'border-gray-300'
-                        }`}
+                        className={`pl-10 pr-12 ${errors.password ? 'border-red-300' : ''}`}
                         placeholder="••••••••"
                         required
                       />
@@ -309,14 +459,12 @@ const Login = ({ setUser, setCurrentView }) => {
                     </label>
                     <div className="relative">
                       <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                      <input
+                      <Input
                         type="password"
                         name="confirmPassword"
                         value={formData.confirmPassword}
                         onChange={handleInputChange}
-                        className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-                          errors.confirmPassword ? 'border-red-300' : 'border-gray-300'
-                        }`}
+                        className={`pl-10 ${errors.confirmPassword ? 'border-red-300' : ''}`}
                         placeholder="••••••••"
                         required
                       />
@@ -326,12 +474,13 @@ const Login = ({ setUser, setCurrentView }) => {
                     )}
                   </div>
 
-                  <button
+                  <Button
                     type="submit"
-                    className="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors duration-300"
+                    className="w-full bg-green-600 text-white hover:bg-green-700"
+                    disabled={loading}
                   >
-                    Criar Conta
-                  </button>
+                    {loading ? "Criando conta..." : "Criar Conta"}
+                  </Button>
                 </form>
               </TabsContent>
             </Tabs>
