@@ -33,7 +33,7 @@ const MobileProductCard = ({
         <img
           src={product.image}
           alt={product.name}
-          className="w-full h-48 object-cover"
+          className="w-full h-48 object-contain bg-gray-50"
         />
         
         <button

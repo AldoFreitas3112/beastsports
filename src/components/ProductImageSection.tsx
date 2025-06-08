@@ -19,7 +19,7 @@ const ProductImageSection = ({ product, isFavorite, toggleFavorite }: ProductIma
       <img
         src={product.image}
         alt={product.name}
-        className="w-full h-96 object-cover rounded-lg"
+        className="w-full h-96 object-contain rounded-lg bg-gray-50"
       />
       
       <button
