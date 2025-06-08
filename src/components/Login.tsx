@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { User, Mail, Lock, Eye, EyeOff, AlertCircle, CheckCircle } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -247,7 +247,7 @@ const Login = ({ setUser, setCurrentView }) => {
   };
 
   // Carregar email salvo se "lembrar-me" estava ativo
-  useState(() => {
+  useEffect(() => {
     const remembered = localStorage.getItem('rememberLogin');
     const savedEmail = localStorage.getItem('userEmail');
     
@@ -354,7 +354,7 @@ const Login = ({ setUser, setCurrentView }) => {
                       <Checkbox
                         id="remember"
                         checked={rememberMe}
-                        onCheckedChange={setRememberMe}
+                        onCheckedChange={(checked) => setRememberMe(checked === true)}
                       />
                       <label
                         htmlFor="remember"
